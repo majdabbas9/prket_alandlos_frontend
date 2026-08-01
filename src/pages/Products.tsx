@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { SlidersHorizontal, ArrowUpDown, X, ArrowRight, Check } from 'lucide-react';
-import { PRODUCTS, WOOD_TYPES, FINISHES, type WoodType, type Finish, type Product } from '@/data/products';
+import { WOOD_TYPES, FINISHES, type WoodType, type Finish, type Product } from '@/data/products';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 
 type SortKey = 'featured' | 'price-asc' | 'price-desc' | 'name-asc';
 
@@ -82,21 +84,63 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 }
 
 export default function Products() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [woodTypes, setWoodTypes] = useState<WoodType[]>([]);
   const [finishes, setFinishes] = useState<Finish[]>([]);
   const [sort, setSort] = useState<SortKey>('featured');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  useEffect(() => {
+    fetch(`${SERVER_URL}/api/products`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data.success && Array.isArray(data.data)) {
+          const mapped: Product[] = data.data.map((p: any) => {
+            let img = p.imageUrl || '';
+            if (img.startsWith('/uploads/')) {
+              img = `${SERVER_URL}${img}`;
+            }
+            return {
+              id: p.id,
+              name: p.title || 'Untitled Product',
+              woodType: p.woodType || 'Oak',
+              finish: p.finish || 'Brushed',
+              thickness: p.thickness || '15 mm',
+              plankSize: p.plankSize || '190 × 1900 mm',
+              description: p.description || '',
+              pricePerSqm: p.price || 0,
+              image: img,
+              tag: p.tag || undefined,
+            };
+          });
+          setProducts(mapped);
+        } else {
+          throw new Error('Invalid products data format');
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err.message || 'Error loading products');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const toggle = <T,>(arr: T[], val: T, setter: (v: T[]) => void) => {
     setter(arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]);
   };
 
   const filtered = useMemo(() => {
-    let list = PRODUCTS.filter(
-      (p) =>
-        (woodTypes.length === 0 || woodTypes.includes(p.woodType)) &&
-        (finishes.length === 0 || finishes.includes(p.finish)),
-    );
+    // For now, ignore wood type and finish filters as per request
+    let list = products;
     switch (sort) {
       case 'price-asc':
         list = [...list].sort((a, b) => a.pricePerSqm - b.pricePerSqm);
@@ -111,7 +155,7 @@ export default function Products() {
         break;
     }
     return list;
-  }, [woodTypes, finishes, sort]);
+  }, [products, sort]);
 
   const activeCount = woodTypes.length + finishes.length;
   const clearAll = () => {
@@ -266,7 +310,16 @@ export default function Products() {
                 </div>
               </div>
 
-              {filtered.length > 0 ? (
+              {loading ? (
+                <div className="flex min-h-[300px] items-center justify-center">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-walnut-800 border-t-transparent"></div>
+                </div>
+              ) : error ? (
+                <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
+                  <p className="font-display text-lg font-600 text-red-600">Failed to load products</p>
+                  <p className="mt-2 text-sm text-ink-500">{error}</p>
+                </div>
+              ) : filtered.length > 0 ? (
                 <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
                   {filtered.map((p, i) => (
                     <ProductCard key={p.id} product={p} index={i} />
