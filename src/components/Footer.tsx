@@ -1,0 +1,102 @@
+import { Link } from 'react-router-dom';
+import { TreePine, Instagram, Facebook, Twitter, MapPin, Clock, Mail, Phone } from 'lucide-react';
+
+const QUICK_LINKS = [
+  { label: 'Home', to: '/' },
+  { label: 'Products', to: '/products' },
+  { label: 'Contact Us', to: '/contact' },
+];
+
+const HOURS = [
+  { day: 'Sunday — Thursday', time: '9:00 AM — 7:00 PM' },
+  { day: 'Friday — Saturday', time: '10:00 AM — 9:00 PM' },
+];
+
+export default function Footer() {
+  return (
+    <footer className="bg-ink-950 text-sand-100">
+      <div className="container-wide grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4 lg:py-20">
+        <div className="lg:col-span-1">
+          <Link to="/" className="flex items-center gap-2.5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-sand-100/20 bg-walnut-800 text-sand-50">
+              <TreePine className="h-5 w-5" />
+            </span>
+            <span className="font-display text-xl font-700 text-sand-50">Artisan Parquet</span>
+          </Link>
+          <p className="mt-5 max-w-xs text-sm leading-relaxed text-sand-100/70">
+            Premium wood flooring, crafted with patience. Sustainably sourced
+            hardwoods finished by hand for floors that last generations.
+          </p>
+          <div className="mt-6 flex gap-3">
+            {[Instagram, Facebook, Twitter].map((Icon, i) => (
+              <a
+                key={i}
+                href="#"
+                aria-label="Social media"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-sand-100/15 text-sand-100/80 transition-all duration-300 hover:border-brass-400 hover:bg-brass-400 hover:text-ink-950"
+              >
+                <Icon className="h-4.5 w-4.5" />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-sand-50">Quick Links</h3>
+          <ul className="mt-5 space-y-3">
+            {QUICK_LINKS.map((link) => (
+              <li key={link.to}>
+                <Link
+                  to={link.to}
+                  className="text-sm text-sand-100/70 transition-colors hover:text-brass-300"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-sand-50">Visit Us</h3>
+          <ul className="mt-5 space-y-4 text-sm text-sand-100/70">
+            <li className="flex gap-3">
+              <MapPin className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
+              <span>27 Timber Yard Lane, Craft District, Cityville 10110</span>
+            </li>
+            <li className="flex gap-3">
+              <Phone className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
+              <span>+1 (212) 555-0148</span>
+            </li>
+            <li className="flex gap-3">
+              <Mail className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
+              <span>hello@artisanparquet.com</span>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-sand-50">
+            <Clock className="h-4 w-4 text-brass-400" />
+            Opening Hours
+          </h3>
+          <ul className="mt-5 space-y-3">
+            {HOURS.map((h) => (
+              <li key={h.day} className="text-sm">
+                <p className="text-sand-100/90">{h.day}</p>
+                <p className="text-sand-100/60">{h.time}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-sand-100/10">
+        <div className="container-wide flex flex-col items-center justify-between gap-3 py-6 text-xs text-sand-100/50 sm:flex-row">
+          <p>© {new Date().getFullYear()} Artisan Parquet. All rights reserved.</p>
+          <p>Crafted with care for floors that tell a story.</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
