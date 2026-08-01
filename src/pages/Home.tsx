@@ -13,8 +13,8 @@ import {
 } from 'lucide-react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
-const HERO_IMG =
-  'https://images.pexels.com/photos/6523303/pexels-photo-6523303.jpeg?auto=compress&cs=tinysrgb&w=1600';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
+const HERO_IMG = `${SERVER_URL}/api/homepage-image`;
 const ABOUT_IMG =
   'https://images.pexels.com/photos/8146215/pexels-photo-8146215.jpeg?auto=compress&cs=tinysrgb&w=1200';
 
