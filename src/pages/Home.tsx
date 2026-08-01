@@ -164,7 +164,7 @@ export default function Home() {
                 Three decades of devotion to the wood beneath your feet
               </h2>
               <p className="mt-6 text-lg leading-relaxed text-ink-600">
-                At Artisan Parquet, we believe a floor is the foundation of a home's
+                At Prket Alandlos, we believe a floor is the foundation of a home's
                 character. For over thirty years our workshop has selected each board
                 by eye, brushed every grain by hand, and finished each surface with
                 natural oils that deepen with age.
@@ -259,7 +259,7 @@ export default function Home() {
                   <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brass-400 text-ink-950 shadow-lift">
                     <MapPin className="h-7 w-7" />
                   </span>
-                  <p className="mt-4 font-display text-lg font-600 text-sand-50">Artisan Parquet Showroom</p>
+                  <p className="mt-4 font-display text-lg font-600 text-sand-50">Prket Alandlos Showroom</p>
                   <p className="mt-1 text-sm text-sand-100/60">27 Timber Yard Lane, Cityville</p>
                 </div>
               </div>
@@ -273,11 +273,11 @@ export default function Home() {
                 Book a Consultation
               </Link>
               <a
-                href="mailto:hello@artisanparquet.com"
+                href="mailto:hello@prketalandlos.com"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-sand-50/30 px-7 py-3.5 text-sm font-medium tracking-wide text-sand-50 transition-all duration-300 hover:border-sand-50 hover:bg-sand-50/10"
               >
                 <Mail className="h-4 w-4" />
-                hello@artisanparquet.com
+                hello@prketalandlos.com
               </a>
             </div>
           </Reveal>

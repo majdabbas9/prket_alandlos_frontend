@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Menu, X, TreePine } from 'lucide-react';
 
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
+const LOGO_URL = `${SERVER_URL}/api/logo`;
+
 const NAV_LINKS = [
   { label: 'Home', to: '/' },
   { label: 'Products', to: '/products' },
@@ -41,20 +44,35 @@ export default function Navbar() {
           className="flex items-center gap-2.5"
         >
           <span
-            className={`flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300 ${
+            className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border transition-colors duration-300 ${
               scrolled
                 ? 'border-walnut-800/20 bg-walnut-800 text-sand-50'
                 : 'border-white/30 bg-white/10 text-sand-50 backdrop-blur-sm'
             }`}
           >
-            <TreePine className="h-5 w-5" />
+            <img
+              src={LOGO_URL}
+              alt="Prket Alandlos Logo"
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLElement).style.display = 'none';
+                const parent = e.currentTarget.parentElement;
+                if (parent) {
+                  const fallback = parent.querySelector('.logo-fallback');
+                  if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                }
+              }}
+            />
+            <span className="logo-fallback hidden h-full w-full items-center justify-center">
+              <TreePine className="h-5 w-5" />
+            </span>
           </span>
           <span
             className={`font-display text-xl font-700 tracking-tight transition-colors duration-300 ${
               scrolled ? 'text-walnut-900' : 'text-sand-50'
             }`}
           >
-            Artisan Parquet
+            Prket Alandlos
           </span>
         </Link>
 

@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
 import { TreePine, Instagram, Facebook, Twitter, MapPin, Clock, Mail, Phone } from 'lucide-react';
 
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
+const LOGO_URL = `${SERVER_URL}/api/logo`;
+
 const QUICK_LINKS = [
   { label: 'Home', to: '/' },
   { label: 'Products', to: '/products' },
@@ -18,10 +21,25 @@ export default function Footer() {
       <div className="container-wide grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4 lg:py-20">
         <div className="lg:col-span-1">
           <Link to="/" className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-sand-100/20 bg-walnut-800 text-sand-50">
-              <TreePine className="h-5 w-5" />
+            <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-sand-100/20 bg-walnut-800 text-sand-50">
+              <img
+                src={LOGO_URL}
+                alt="Prket Alandlos Logo"
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  (e.currentTarget as HTMLElement).style.display = 'none';
+                  const parent = e.currentTarget.parentElement;
+                  if (parent) {
+                    const fallback = parent.querySelector('.logo-fallback');
+                    if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                  }
+                }}
+              />
+              <span className="logo-fallback hidden h-full w-full items-center justify-center">
+                <TreePine className="h-5 w-5" />
+              </span>
             </span>
-            <span className="font-display text-xl font-700 text-sand-50">Artisan Parquet</span>
+            <span className="font-display text-xl font-700 text-sand-50">Prket Alandlos</span>
           </Link>
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-sand-100/70">
             Premium wood flooring, crafted with patience. Sustainably sourced
@@ -70,7 +88,7 @@ export default function Footer() {
             </li>
             <li className="flex gap-3">
               <Mail className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
-              <span>hello@artisanparquet.com</span>
+              <span>hello@prketalandlos.com</span>
             </li>
           </ul>
         </div>
@@ -93,7 +111,7 @@ export default function Footer() {
 
       <div className="border-t border-sand-100/10">
         <div className="container-wide flex flex-col items-center justify-between gap-3 py-6 text-xs text-sand-100/50 sm:flex-row">
-          <p>© {new Date().getFullYear()} Artisan Parquet. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Prket Alandlos. All rights reserved.</p>
           <p>Crafted with care for floors that tell a story.</p>
         </div>
       </div>

@@ -34,8 +34,8 @@ const CONTACT_CARDS = [
   {
     icon: Mail,
     title: 'Email Us',
-    lines: ['hello@artisanparquet.com', 'We reply within 24 hours'],
-    href: 'mailto:hello@artisanparquet.com',
+    lines: ['hello@prketalandlos.com', 'We reply within 24 hours'],
+    href: 'mailto:hello@prketalandlos.com',
   },
   {
     icon: MapPin,
@@ -365,7 +365,7 @@ export default function Contact() {
                     <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-walnut-800 text-sand-50 shadow-card">
                       <MapPin className="h-6 w-6" />
                     </span>
-                    <p className="mt-3 text-sm font-medium text-walnut-900">Artisan Parquet Showroom</p>
+                    <p className="mt-3 text-sm font-medium text-walnut-900">Prket Alandlos Showroom</p>
                   </div>
                 </div>
               </div>
