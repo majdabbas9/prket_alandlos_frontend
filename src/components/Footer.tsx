@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { TreePine, Instagram, Facebook, Twitter, MapPin, Clock, Mail, Phone } from 'lucide-react';
+import { TreePine, Instagram, Facebook, Twitter, MapPin, Clock, Mail, Phone, MessageCircle } from 'lucide-react';
+import { useInfo, parseOpeningTime } from '@/hooks/useInfo';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 const LOGO_URL = `${SERVER_URL}/api/logo`;
@@ -16,6 +17,16 @@ const HOURS = [
 ];
 
 export default function Footer() {
+  const { info } = useInfo();
+  const parsedHours = info ? parseOpeningTime(info.storeOpeningTime) : null;
+
+  const whatsappUrl = info?.whatsappLink ? (info.whatsappLink.startsWith('http') ? info.whatsappLink : `https://${info.whatsappLink}`) : '#';
+
+  const socialLinks = [
+    { Icon: Instagram, href: 'https://www.instagram.com/prket_alandlos/', label: 'Instagram' },
+    ...(info?.whatsappLink ? [{ Icon: MessageCircle, href: whatsappUrl, label: 'WhatsApp' }] : []),
+  ];
+
   return (
     <footer className="bg-ink-950 text-sand-100">
       <div className="container-wide grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-4 lg:py-20">
@@ -46,11 +57,13 @@ export default function Footer() {
             hardwoods finished by hand for floors that last generations.
           </p>
           <div className="mt-6 flex gap-3">
-            {[Instagram, Facebook, Twitter].map((Icon, i) => (
+            {socialLinks.map(({ Icon, href, label }, i) => (
               <a
                 key={i}
-                href="#"
-                aria-label="Social media"
+                href={href}
+                target={href !== '#' ? '_blank' : undefined}
+                rel={href !== '#' ? 'noopener noreferrer' : undefined}
+                aria-label={label}
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-sand-100/15 text-sand-100/80 transition-all duration-300 hover:border-brass-400 hover:bg-brass-400 hover:text-ink-950"
               >
                 <Icon className="h-4.5 w-4.5" />
@@ -80,15 +93,19 @@ export default function Footer() {
           <ul className="mt-5 space-y-4 text-sm text-sand-100/70">
             <li className="flex gap-3">
               <MapPin className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
-              <span>27 Timber Yard Lane, Craft District, Cityville 10110</span>
+              <span>{info?.location || 'kafr kanna, Isreal'}</span>
             </li>
             <li className="flex gap-3">
               <Phone className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
-              <span>+1 (212) 555-0148</span>
+              <a href={`tel:${info?.phone || '053-3919190'}`} className="hover:text-brass-300">
+                {info?.phone || '053-3919190'}
+              </a>
             </li>
             <li className="flex gap-3">
               <Mail className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
-              <span>hello@prketalandlos.com</span>
+              <a href={`mailto:${info?.email || 'contact@prketalandlos.com'}`} className="hover:text-brass-300">
+                {info?.email || 'contact@prketalandlos.com'}
+              </a>
             </li>
           </ul>
         </div>
@@ -99,12 +116,19 @@ export default function Footer() {
             Opening Hours
           </h3>
           <ul className="mt-5 space-y-3">
-            {HOURS.map((h) => (
-              <li key={h.day} className="text-sm">
-                <p className="text-sand-100/90">{h.day}</p>
-                <p className="text-sand-100/60">{h.time}</p>
+            {parsedHours ? (
+              <li className="text-sm">
+                <p className="text-sand-100/90">{parsedHours.days}</p>
+                <p className="text-sand-100/60">{parsedHours.time}</p>
               </li>
-            ))}
+            ) : (
+              HOURS.map((h) => (
+                <li key={h.day} className="text-sm">
+                  <p className="text-sand-100/90">{h.day}</p>
+                  <p className="text-sand-100/60">{h.time}</p>
+                </li>
+              ))
+            )}
           </ul>
         </div>
       </div>

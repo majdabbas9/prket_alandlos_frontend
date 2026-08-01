@@ -12,6 +12,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useInfo, parseOpeningTime } from '@/hooks/useInfo';
 
 interface FormState {
   fullName: string;
@@ -23,27 +24,6 @@ interface FormState {
 type Errors = Partial<Record<keyof FormState, string>>;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const CONTACT_CARDS = [
-  {
-    icon: Phone,
-    title: 'Call Us',
-    lines: ['+1 (212) 555-0148', 'Mon — Sat, 9am to 7pm'],
-    href: 'tel:+12125550148',
-  },
-  {
-    icon: Mail,
-    title: 'Email Us',
-    lines: ['hello@prketalandlos.com', 'We reply within 24 hours'],
-    href: 'mailto:hello@prketalandlos.com',
-  },
-  {
-    icon: MapPin,
-    title: 'Visit the Showroom',
-    lines: ['27 Timber Yard Lane', 'Craft District, Cityville 10110'],
-    href: '#location',
-  },
-];
 
 function Reveal({
   children,
@@ -67,6 +47,30 @@ function Reveal({
 }
 
 export default function Contact() {
+  const { info } = useInfo();
+  const parsedHours = info ? parseOpeningTime(info.storeOpeningTime) : null;
+
+  const contactCards = [
+    {
+      icon: Phone,
+      title: 'Call Us',
+      lines: [info?.phone || '053-3919190', parsedHours ? `${parsedHours.days}, ${parsedHours.time}` : 'Mon — Sat, 9am to 7pm'],
+      href: `tel:${info?.phone || '053-3919190'}`,
+    },
+    {
+      icon: Mail,
+      title: 'Email Us',
+      lines: [info?.email || 'contact@prketalandlos.com', 'We reply within 24 hours'],
+      href: `mailto:${info?.email || 'contact@prketalandlos.com'}`,
+    },
+    {
+      icon: MapPin,
+      title: 'Visit the Showroom',
+      lines: [info?.location || 'kafr kanna, Isreal'],
+      href: '#location',
+    },
+  ];
+
   const [form, setForm] = useState<FormState>({
     fullName: '',
     email: '',
@@ -138,7 +142,7 @@ export default function Contact() {
       <section className="py-16 lg:py-20">
         <div className="container-wide">
           <div className="grid gap-6 md:grid-cols-3">
-            {CONTACT_CARDS.map((card, i) => (
+            {contactCards.map((card, i) => (
               <Reveal key={card.title} delay={i * 100}>
                 <a
                   href={card.href}
@@ -317,14 +321,23 @@ export default function Contact() {
                   Store Hours
                 </h3>
                 <ul className="mt-5 divide-y divide-ink-100">
-                  <li className="flex items-center justify-between py-3">
-                    <span className="text-sm text-ink-600">Sunday — Thursday</span>
-                    <span className="text-sm font-medium text-walnut-900">9:00 AM — 7:00 PM</span>
-                  </li>
-                  <li className="flex items-center justify-between py-3">
-                    <span className="text-sm text-ink-600">Friday — Saturday</span>
-                    <span className="text-sm font-medium text-walnut-900">10:00 AM — 9:00 PM</span>
-                  </li>
+                  {parsedHours ? (
+                    <li className="flex flex-col gap-1 py-3 justify-center">
+                      <span className="text-sm text-ink-600 font-semibold">{parsedHours.days}</span>
+                      <span className="text-sm font-medium text-walnut-900">{parsedHours.time}</span>
+                    </li>
+                  ) : (
+                    <>
+                      <li className="flex items-center justify-between py-3">
+                        <span className="text-sm text-ink-600">Sunday — Thursday</span>
+                        <span className="text-sm font-medium text-walnut-900">9:00 AM — 7:00 PM</span>
+                      </li>
+                      <li className="flex items-center justify-between py-3">
+                        <span className="text-sm text-ink-600">Friday — Saturday</span>
+                        <span className="text-sm font-medium text-walnut-900">10:00 AM — 9:00 PM</span>
+                      </li>
+                    </>
+                  )}
                   <li className="flex items-center justify-between py-3">
                     <span className="text-sm text-ink-600">Public Holidays</span>
                     <span className="text-sm font-medium text-brass-700">By appointment</span>
@@ -338,14 +351,13 @@ export default function Contact() {
                   How to Find Us
                 </h3>
                 <p className="mt-4 text-sm leading-relaxed text-ink-600">
-                  27 Timber Yard Lane, Craft District, Cityville 10110. We're a 5-minute
-                  walk from Craft District metro station, just off the main square.
+                  {info?.location || 'kafr kanna, Isreal'}. We're centrally located and easily accessible.
                 </p>
                 <div className="mt-5 flex items-start gap-3 rounded-xl bg-sand-100/60 p-4">
                   <Car className="mt-0.5 h-5 w-5 shrink-0 text-brass-600" />
                   <p className="text-sm text-ink-700">
                     <span className="font-semibold text-walnut-900">Free parking available</span> on
-                    site for all showroom visitors — including accessible bays near the entrance.
+                    site for all showroom visitors.
                   </p>
                 </div>
               </div>
@@ -366,6 +378,7 @@ export default function Contact() {
                       <MapPin className="h-6 w-6" />
                     </span>
                     <p className="mt-3 text-sm font-medium text-walnut-900">Prket Alandlos Showroom</p>
+                    <p className="mt-1 text-xs text-ink-500">{info?.location || 'kafr kanna, Isreal'}</p>
                   </div>
                 </div>
               </div>

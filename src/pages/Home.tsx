@@ -12,6 +12,7 @@ import {
   Star,
 } from 'lucide-react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useInfo, parseOpeningTime } from '@/hooks/useInfo';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 const HERO_IMG = `${SERVER_URL}/api/homepage-image`;
@@ -65,6 +66,9 @@ function Reveal({
 }
 
 export default function Home() {
+  const { info } = useInfo();
+  const parsedHours = info ? parseOpeningTime(info.storeOpeningTime) : null;
+
   return (
     <>
       {/* Hero */}
@@ -216,8 +220,7 @@ export default function Home() {
                 <MapPin className="h-7 w-7 text-brass-400" />
                 <h3 className="mt-5 font-display text-xl font-600 text-sand-50">Our Address</h3>
                 <p className="mt-3 text-sm leading-relaxed text-sand-100/70">
-                  27 Timber Yard Lane<br />
-                  Craft District, Cityville 10110
+                  {info?.location || 'kafr kanna, Isreal'}
                 </p>
               </div>
             </Reveal>
@@ -226,8 +229,17 @@ export default function Home() {
                 <Clock className="h-7 w-7 text-brass-400" />
                 <h3 className="mt-5 font-display text-xl font-600 text-sand-50">Opening Hours</h3>
                 <ul className="mt-3 space-y-1.5 text-sm text-sand-100/70">
-                  <li>Sunday — Thursday: 9:00 AM — 7:00 PM</li>
-                  <li>Friday — Saturday: 10:00 AM — 9:00 PM</li>
+                  {parsedHours ? (
+                    <li>
+                      <div>{parsedHours.days}</div>
+                      <div className="text-xs text-sand-100/50 mt-0.5">{parsedHours.time}</div>
+                    </li>
+                  ) : (
+                    <>
+                      <li>Sunday — Thursday: 9:00 AM — 7:00 PM</li>
+                      <li>Friday — Saturday: 10:00 AM — 9:00 PM</li>
+                    </>
+                  )}
                 </ul>
               </div>
             </Reveal>
@@ -236,8 +248,7 @@ export default function Home() {
                 <Car className="h-7 w-7 text-brass-400" />
                 <h3 className="mt-5 font-display text-xl font-600 text-sand-50">Getting Here</h3>
                 <p className="mt-3 text-sm leading-relaxed text-sand-100/70">
-                  Free on-site parking for all showroom visitors. We're a 5-minute walk
-                  from Craft District metro station.
+                  Free on-site parking for all showroom visitors. Located in {info?.location.split(',')[0] || 'kafr kanna'}.
                 </p>
               </div>
             </Reveal>
@@ -260,7 +271,7 @@ export default function Home() {
                     <MapPin className="h-7 w-7" />
                   </span>
                   <p className="mt-4 font-display text-lg font-600 text-sand-50">Prket Alandlos Showroom</p>
-                  <p className="mt-1 text-sm text-sand-100/60">27 Timber Yard Lane, Cityville</p>
+                  <p className="mt-1 text-sm text-sand-100/60">{info?.location || 'kafr kanna, Isreal'}</p>
                 </div>
               </div>
             </div>
@@ -273,11 +284,11 @@ export default function Home() {
                 Book a Consultation
               </Link>
               <a
-                href="mailto:hello@prketalandlos.com"
+                href={`mailto:${info?.email || 'contact@prketalandlos.com'}`}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-sand-50/30 px-7 py-3.5 text-sm font-medium tracking-wide text-sand-50 transition-all duration-300 hover:border-sand-50 hover:bg-sand-50/10"
               >
                 <Mail className="h-4 w-4" />
-                hello@prketalandlos.com
+                {info?.email || 'contact@prketalandlos.com'}
               </a>
             </div>
           </Reveal>
