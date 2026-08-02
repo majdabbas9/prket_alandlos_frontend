@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
-import { SlidersHorizontal, ArrowUpDown, X, ArrowRight, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { SlidersHorizontal, ArrowUpDown, X, ArrowRight, Check, ArrowLeft } from 'lucide-react';
 import { WOOD_TYPES, FINISHES, type WoodType, type Finish, type Product } from '@/data/products';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
@@ -14,7 +15,15 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: 'name-asc', label: 'Name: A to Z' },
 ];
 
-function ProductCard({ product, index }: { product: Product; index: number }) {
+function ProductCard({
+  product,
+  index,
+  onViewDetails,
+}: {
+  product: Product;
+  index: number;
+  onViewDetails: (product: Product) => void;
+}) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>();
   return (
     <div
@@ -73,6 +82,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 
         <button
           type="button"
+          onClick={() => onViewDetails(product)}
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-walnut-800/25 py-3 text-sm font-medium tracking-wide text-walnut-800 transition-all duration-300 hover:bg-walnut-800 hover:text-sand-50 group/btn"
         >
           View Details
@@ -84,6 +94,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 }
 
 export default function Products() {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -91,6 +102,11 @@ export default function Products() {
   const [finishes, setFinishes] = useState<Finish[]>([]);
   const [sort, setSort] = useState<SortKey>('featured');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const handleViewDetails = (product: Product) => {
+    setSelectedProduct(product);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     fetch(`${SERVER_URL}/api/products`)
@@ -255,91 +271,186 @@ export default function Products() {
       {/* Catalog */}
       <section className="py-16 lg:py-24">
         <div className="container-wide">
-          <div className="flex flex-col gap-6 lg:flex-row lg:gap-12">
-            {/* Desktop sidebar */}
-            <aside className="hidden w-64 shrink-0 lg:block">
-              <div className="sticky top-28">
-                <div className="mb-6 flex items-center gap-2">
-                  <SlidersHorizontal className="h-5 w-5 text-walnut-800" />
-                  <h2 className="font-display text-lg font-600 text-walnut-900">Filters</h2>
-                </div>
-                <FilterPanel />
+          {selectedProduct ? (
+            <div className="animate-fade-in">
+              {/* Back button & Breadcrumb */}
+              <div className="mb-10 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedProduct(null)}
+                  className="inline-flex items-center gap-2 text-sm font-medium text-walnut-800 transition-colors hover:text-walnut-600 font-semibold"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Collection
+                </button>
+                <span className="text-ink-300">/</span>
+                <span className="text-sm font-medium text-ink-600">{selectedProduct.name}</span>
               </div>
-            </aside>
 
-            {/* Main grid */}
-            <div className="flex-1">
-              <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setMobileFiltersOpen(true)}
-                    className="inline-flex items-center gap-2 rounded-full border border-ink-200 px-4 py-2.5 text-sm font-medium text-ink-700 transition-colors hover:border-walnut-800 hover:text-walnut-800 lg:hidden"
-                  >
-                    <SlidersHorizontal className="h-4 w-4" />
-                    Filters
-                    {activeCount > 0 && (
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-walnut-800 text-xs text-sand-50">
-                        {activeCount}
+              {/* Main detail layout */}
+              <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+                {/* Full Image view */}
+                <div className="lg:col-span-7">
+                  <div className="overflow-hidden rounded-3xl bg-sand-50 border border-ink-200/60 p-2 shadow-soft">
+                    <img
+                      src={selectedProduct.image}
+                      alt={selectedProduct.name}
+                      className="w-full h-auto max-h-[75vh] object-contain rounded-2xl mx-auto shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Specs and action info */}
+                <div className="lg:col-span-5 flex flex-col justify-between">
+                  <div>
+                    {selectedProduct.tag && (
+                      <span className="inline-block rounded-full bg-walnut-800 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-sand-50 shadow-soft mb-4">
+                        {selectedProduct.tag}
                       </span>
                     )}
-                  </button>
-                  <p className="text-sm text-ink-500">
-                    Showing <span className="font-semibold text-walnut-900">{filtered.length}</span>{' '}
-                    {filtered.length === 1 ? 'product' : 'products'}
-                  </p>
-                </div>
+                    <h2 className="font-display text-4xl font-700 text-walnut-900 leading-tight">
+                      {selectedProduct.name}
+                    </h2>
+                    
+                    <p className="mt-4 font-display text-2xl font-700 text-brass-600">
+                      ${selectedProduct.pricePerSqm}
+                      <span className="text-sm font-400 text-ink-400 ml-1">/ m²</span>
+                    </p>
 
-                <div className="flex items-center gap-2">
-                  <ArrowUpDown className="h-4 w-4 text-ink-400" />
-                  <label htmlFor="sort" className="sr-only">
-                    Sort by
-                  </label>
-                  <select
-                    id="sort"
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value as SortKey)}
-                    className="rounded-full border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-700 transition-colors focus:border-walnut-500 focus:outline-none focus:ring-2 focus:ring-walnut-500/20"
-                  >
-                    {SORT_OPTIONS.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
+                    <div className="mt-6 border-t border-ink-200/60 pt-6">
+                      <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900 mb-3">
+                        Description
+                      </h3>
+                      <p className="text-base leading-relaxed text-ink-600">
+                        {selectedProduct.description}
+                      </p>
+                    </div>
+
+                    <div className="mt-8 border-t border-ink-200/60 pt-6">
+                      <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900 mb-4">
+                        Specifications
+                      </h3>
+                      <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
+                        <div className="border-b border-ink-100 pb-2">
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">Wood Type</dt>
+                          <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.woodType}</dd>
+                        </div>
+                        <div className="border-b border-ink-100 pb-2">
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">Finish</dt>
+                          <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.finish}</dd>
+                        </div>
+                        <div className="border-b border-ink-100 pb-2">
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">Thickness</dt>
+                          <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.thickness}</dd>
+                        </div>
+                        <div className="border-b border-ink-100 pb-2">
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">Plank Size</dt>
+                          <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.plankSize}</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </div>
+
+                  <div className="mt-10 pt-6 border-t border-ink-200/60">
+                    <Link
+                      to="/contact"
+                      state={{ fromProduct: selectedProduct.name }}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-walnut-800 py-4 text-base font-semibold tracking-wide text-sand-50 transition-all duration-300 hover:bg-walnut-700 hover:shadow-lift"
+                    >
+                      Inquire About This Floor
+                      <ArrowRight className="h-5 w-5" />
+                    </Link>
+                  </div>
                 </div>
               </div>
-
-              {loading ? (
-                <div className="flex min-h-[300px] items-center justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-walnut-800 border-t-transparent"></div>
-                </div>
-              ) : error ? (
-                <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
-                  <p className="font-display text-lg font-600 text-red-600">Failed to load products</p>
-                  <p className="mt-2 text-sm text-ink-500">{error}</p>
-                </div>
-              ) : filtered.length > 0 ? (
-                <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
-                  {filtered.map((p, i) => (
-                    <ProductCard key={p.id} product={p} index={i} />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink-300 py-24 text-center">
-                  <p className="font-display text-xl font-600 text-walnut-900">No floors match those filters</p>
-                  <p className="mt-2 text-sm text-ink-500">Try removing a filter to see more options.</p>
-                  <button
-                    type="button"
-                    onClick={clearAll}
-                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-walnut-800 px-6 py-3 text-sm font-medium text-sand-50 transition-colors hover:bg-walnut-700"
-                  >
-                    Clear filters
-                  </button>
-                </div>
-              )}
             </div>
-          </div>
+          ) : (
+            <div className="flex flex-col gap-6 lg:flex-row lg:gap-12">
+              {/* Desktop sidebar */}
+              <aside className="hidden w-64 shrink-0 lg:block">
+                <div className="sticky top-28">
+                  <div className="mb-6 flex items-center gap-2">
+                    <SlidersHorizontal className="h-5 w-5 text-walnut-800" />
+                    <h2 className="font-display text-lg font-600 text-walnut-900">Filters</h2>
+                  </div>
+                  <FilterPanel />
+                </div>
+              </aside>
+
+              {/* Main grid */}
+              <div className="flex-1">
+                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setMobileFiltersOpen(true)}
+                      className="inline-flex items-center gap-2 rounded-full border border-ink-200 px-4 py-2.5 text-sm font-medium text-ink-700 transition-colors hover:border-walnut-800 hover:text-walnut-800 lg:hidden"
+                    >
+                      <SlidersHorizontal className="h-4 w-4" />
+                      Filters
+                      {activeCount > 0 && (
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-walnut-800 text-xs text-sand-50">
+                          {activeCount}
+                        </span>
+                      )}
+                    </button>
+                    <p className="text-sm text-ink-500">
+                      Showing <span className="font-semibold text-walnut-900">{filtered.length}</span>{' '}
+                      {filtered.length === 1 ? 'product' : 'products'}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <ArrowUpDown className="h-4 w-4 text-ink-400" />
+                    <label htmlFor="sort" className="sr-only">
+                      Sort by
+                    </label>
+                    <select
+                      id="sort"
+                      value={sort}
+                      onChange={(e) => setSort(e.target.value as SortKey)}
+                      className="rounded-full border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-700 transition-colors focus:border-walnut-500 focus:outline-none focus:ring-2 focus:ring-walnut-500/20"
+                    >
+                      {SORT_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {loading ? (
+                  <div className="flex min-h-[300px] items-center justify-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-walnut-800 border-t-transparent"></div>
+                  </div>
+                ) : error ? (
+                  <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
+                    <p className="font-display text-lg font-600 text-red-600">Failed to load products</p>
+                    <p className="mt-2 text-sm text-ink-500">{error}</p>
+                  </div>
+                ) : filtered.length > 0 ? (
+                  <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
+                    {filtered.map((p, i) => (
+                      <ProductCard key={p.id} product={p} index={i} onViewDetails={handleViewDetails} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink-300 py-24 text-center">
+                    <p className="font-display text-xl font-600 text-walnut-900">No floors match those filters</p>
+                    <p className="mt-2 text-sm text-ink-500">Try removing a filter to see more options.</p>
+                    <button
+                      type="button"
+                      onClick={clearAll}
+                      className="mt-6 inline-flex items-center gap-2 rounded-full bg-walnut-800 px-6 py-3 text-sm font-medium text-sand-50 transition-colors hover:bg-walnut-700"
+                    >
+                      Clear filters
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
