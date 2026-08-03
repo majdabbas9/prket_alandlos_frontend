@@ -10,6 +10,7 @@ import {
   AlertCircle,
   User,
   MessageSquare,
+  MessageCircle,
 } from 'lucide-react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useInfo, parseOpeningTime } from '@/hooks/useInfo';
@@ -58,10 +59,10 @@ export default function Contact() {
       href: `tel:${info?.phone || '053-3919190'}`,
     },
     {
-      icon: Mail,
-      title: 'Email Us',
-      lines: [info?.email || 'contact@prketalandlos.com', 'We reply within 24 hours'],
-      href: `mailto:${info?.email || 'contact@prketalandlos.com'}`,
+      icon: MessageCircle,
+      title: 'WhatsApp Us',
+      lines: [info?.whatsappLink || 'wa.me/+972533919190', 'Click to chat with us'],
+      href: info?.whatsappLink ? (info.whatsappLink.startsWith('http') ? info.whatsappLink : `https://${info.whatsappLink}`) : 'https://wa.me/+972533919190',
     },
     {
       icon: MapPin,

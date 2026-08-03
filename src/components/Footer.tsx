@@ -102,9 +102,9 @@ export default function Footer() {
               </a>
             </li>
             <li className="flex gap-3">
-              <Mail className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
-              <a href={`mailto:${info?.email || 'contact@prketalandlos.com'}`} className="hover:text-brass-300">
-                {info?.email || 'contact@prketalandlos.com'}
+              <MessageCircle className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
+              <a href={whatsappUrl} className="hover:text-brass-300">
+                {info?.whatsappLink || 'wa.me/+972533919190'}
               </a>
             </li>
           </ul>
