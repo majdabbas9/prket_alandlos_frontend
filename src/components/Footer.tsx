@@ -53,8 +53,8 @@ export default function Footer() {
             <span className="font-display text-xl font-700 text-sand-50">Prket Alandlos</span>
           </Link>
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-sand-100/70">
-            Premium wood flooring, crafted with patience. Sustainably sourced
-            hardwoods finished by hand for floors that last generations.
+            {info?.description ||
+              'Premium wood flooring, crafted with patience. Sustainably sourced hardwoods finished by hand for floors that last generations.'}
           </p>
           <div className="mt-6 flex gap-3">
             {socialLinks.map(({ Icon, href, label }, i) => (

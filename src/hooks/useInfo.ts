@@ -12,6 +12,7 @@ export interface StoreInfo {
   phone: string;
   whatsappLink: string;
   location: string;
+  description?: string;
   stats?: Stat[];
 }
 
