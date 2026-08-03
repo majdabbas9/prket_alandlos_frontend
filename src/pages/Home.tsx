@@ -37,7 +37,7 @@ const VALUES = [
   },
 ];
 
-const STATS = [
+const DEFAULT_STATS = [
   { value: '30+', label: 'Years of Craft' },
   { value: '1,200', label: 'Floors Installed' },
   { value: '9', label: 'Wood Collections' },
@@ -68,6 +68,7 @@ function Reveal({
 export default function Home() {
   const { info } = useInfo();
   const parsedHours = info ? parseOpeningTime(info.storeOpeningTime) : null;
+  const statsToRender = info?.stats && info.stats.length > 0 ? info.stats : DEFAULT_STATS;
 
   return (
     <>
@@ -124,7 +125,7 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 z-10">
           <div className="container-wide pb-10">
             <div className="hidden gap-10 rounded-2xl border border-sand-50/15 bg-ink-950/30 px-8 py-6 backdrop-blur-md sm:grid sm:grid-cols-4">
-              {STATS.map((s) => (
+              {statsToRender.map((s) => (
                 <div key={s.label}>
                   <p className="font-display text-3xl font-700 text-sand-50">{s.value}</p>
                   <p className="mt-1 text-xs uppercase tracking-[0.16em] text-sand-100/70">{s.label}</p>

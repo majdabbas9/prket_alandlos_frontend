@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 
+export interface Stat {
+  value: string;
+  label: string;
+}
+
 export interface StoreInfo {
   showPrice: boolean;
   storeOpeningTime: string;
@@ -7,6 +12,7 @@ export interface StoreInfo {
   phone: string;
   whatsappLink: string;
   location: string;
+  stats?: Stat[];
 }
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
