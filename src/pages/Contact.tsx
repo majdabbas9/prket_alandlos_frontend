@@ -59,13 +59,13 @@ export default function Contact() {
       {/* Header */}
       <section className="bg-ink-950 pt-36 pb-20 text-sand-100 lg:pt-44 lg:pb-28">
         <div className="container-wide">
-          <p className="eyebrow text-brass-300">Get in Touch</p>
+          <p className="eyebrow text-brass-300">{info?.contactEyebrow || 'Get in Touch'}</p>
           <h1 className="mt-4 max-w-3xl font-display text-5xl font-700 leading-[1.05] text-sand-50 sm:text-6xl">
-            Let's talk about your floor
+            {info?.contactTitle || "Let's talk about your floor"}
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-sand-100/70">
-            Whether you're planning a renovation or just exploring finishes, our
-            specialists are here to help. Reach out and we'll find the right wood for your space.
+            {info?.contactDescription ||
+              "Whether you're planning a renovation or just exploring finishes, our specialists are here to help. Reach out and we'll find the find the right wood for your space."}
           </p>
         </div>
       </section>
