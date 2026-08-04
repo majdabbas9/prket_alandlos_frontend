@@ -206,9 +206,8 @@ export default function Contact() {
                           onChange={(e) => handleChange('fullName', e.target.value)}
                           onBlur={() => handleBlur('fullName')}
                           placeholder="Jane Doe"
-                          className={`field-input pl-11 ${
-                            errors.fullName ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : ''
-                          }`}
+                          className={`field-input pl-11 ${errors.fullName ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : ''
+                            }`}
                           aria-invalid={!!errors.fullName}
                         />
                       </div>
@@ -234,9 +233,8 @@ export default function Contact() {
                             onChange={(e) => handleChange('email', e.target.value)}
                             onBlur={() => handleBlur('email')}
                             placeholder="jane@example.com"
-                            className={`field-input pl-11 ${
-                              errors.email ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : ''
-                            }`}
+                            className={`field-input pl-11 ${errors.email ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : ''
+                              }`}
                             aria-invalid={!!errors.email}
                           />
                         </div>
@@ -261,9 +259,8 @@ export default function Contact() {
                             onChange={(e) => handleChange('phone', e.target.value)}
                             onBlur={() => handleBlur('phone')}
                             placeholder="+1 (212) 555-0123"
-                            className={`field-input pl-11 ${
-                              errors.phone ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : ''
-                            }`}
+                            className={`field-input pl-11 ${errors.phone ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : ''
+                              }`}
                             aria-invalid={!!errors.phone}
                           />
                         </div>
@@ -289,9 +286,8 @@ export default function Contact() {
                           onChange={(e) => handleChange('message', e.target.value)}
                           onBlur={() => handleBlur('message')}
                           placeholder="Tell us about your project, room size, or the look you're after…"
-                          className={`field-input resize-none pl-11 ${
-                            errors.message ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : ''
-                          }`}
+                          className={`field-input resize-none pl-11 ${errors.message ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : ''
+                            }`}
                           aria-invalid={!!errors.message}
                         />
                       </div>
@@ -374,12 +370,31 @@ export default function Contact() {
                       backgroundSize: '40px 40px',
                     }}
                   />
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full px-4">
                     <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-walnut-800 text-sand-50 shadow-card">
                       <MapPin className="h-6 w-6" />
                     </span>
-                    <p className="mt-3 text-sm font-medium text-walnut-900">Prket Alandlos Showroom</p>
+                    <p className="mt-3 text-sm font-medium text-walnut-900 font-display">Prket Alandlos Showroom</p>
                     <p className="mt-1 text-xs text-ink-500">{info?.location || 'kafr kanna, Isreal'}</p>
+                    
+                    <div className="mt-4 flex items-center justify-center gap-2">
+                      <a
+                        href={`https://maps.google.com/?q=${encodeURIComponent(info?.location || 'Alandlos Parquet Kafr Kanna')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-full bg-walnut-800 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-sand-50 transition-all duration-300 hover:bg-walnut-700 hover:scale-105 active:scale-95 shadow-sm"
+                      >
+                        Google Maps
+                      </a>
+                      <a
+                        href={`https://waze.com/ul?q=${encodeURIComponent(info?.location || 'Alandlos Parquet Kafr Kanna')}&navigate=yes`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-full bg-sky-500 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-sky-400 hover:scale-105 active:scale-95 shadow-sm"
+                      >
+                        Waze
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -269,12 +269,31 @@ export default function Home() {
                     backgroundSize: '48px 48px',
                   }}
                 />
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center w-full px-4">
                   <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brass-400 text-ink-950 shadow-lift">
                     <MapPin className="h-7 w-7" />
                   </span>
                   <p className="mt-4 font-display text-lg font-600 text-sand-50">Prket Alandlos Showroom</p>
                   <p className="mt-1 text-sm text-sand-100/60">{info?.location || 'kafr kanna, Isreal'}</p>
+                  
+                  <div className="mt-5 flex items-center justify-center gap-3">
+                    <a
+                      href={`https://maps.google.com/?q=${encodeURIComponent(info?.location || 'Alandlos Parquet Kafr Kanna')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-brass-400 px-5 py-2 text-xs font-bold uppercase tracking-wider text-ink-950 transition-all duration-300 hover:bg-brass-300 hover:scale-105 active:scale-95 shadow-md"
+                    >
+                      Google Maps
+                    </a>
+                    <a
+                      href={`https://waze.com/ul?q=${encodeURIComponent(info?.location || 'Alandlos Parquet Kafr Kanna')}&navigate=yes`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-sky-500 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-sky-400 hover:scale-105 active:scale-95 shadow-md"
+                    >
+                      Waze
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
