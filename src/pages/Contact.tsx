@@ -335,10 +335,6 @@ export default function Contact() {
                       </li>
                     </>
                   )}
-                  <li className="flex items-center justify-between py-3">
-                    <span className="text-sm text-ink-600">Public Holidays</span>
-                    <span className="text-sm font-medium text-brass-700">By appointment</span>
-                  </li>
                 </ul>
               </div>
 
@@ -348,15 +344,8 @@ export default function Contact() {
                   How to Find Us
                 </h3>
                 <p className="mt-4 text-sm leading-relaxed text-ink-600">
-                  {info?.location || 'kafr kanna, Isreal'}. We're centrally located and easily accessible.
+                  {info?.location || 'kafr kanna, Isreal'}
                 </p>
-                <div className="mt-5 flex items-start gap-3 rounded-xl bg-sand-100/60 p-4">
-                  <Car className="mt-0.5 h-5 w-5 shrink-0 text-brass-600" />
-                  <p className="text-sm text-ink-700">
-                    <span className="font-semibold text-walnut-900">Free parking available</span> on
-                    site for all showroom visitors.
-                  </p>
-                </div>
               </div>
 
               {/* Map placeholder */}
@@ -376,7 +365,7 @@ export default function Contact() {
                     </span>
                     <p className="mt-3 text-sm font-medium text-walnut-900 font-display">Prket Alandlos Showroom</p>
                     <p className="mt-1 text-xs text-ink-500">{info?.location || 'kafr kanna, Isreal'}</p>
-                    
+
                     <div className="mt-4 flex items-center justify-center gap-2">
                       <a
                         href={`https://maps.google.com/?q=${encodeURIComponent(info?.location || 'Alandlos Parquet Kafr Kanna')}`}
