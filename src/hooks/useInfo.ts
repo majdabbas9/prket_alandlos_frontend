@@ -14,6 +14,9 @@ export interface StoreInfo {
   location: string;
   description?: string;
   stats?: Stat[];
+  showroomEyebrow?: string;
+  showroomTitle?: string;
+  showroomDescription?: string;
 }
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';

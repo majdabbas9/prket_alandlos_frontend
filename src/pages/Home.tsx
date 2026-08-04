@@ -137,7 +137,7 @@ export default function Home() {
       </section>
 
       {/* About / Craftsmanship */}
-      <section className="py-24 lg:py-32">
+      {/*<section className="py-24 lg:py-32">
         <div className="container-wide grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <Reveal>
             <div className="relative">
@@ -197,20 +197,22 @@ export default function Home() {
             </div>
           </Reveal>
         </div>
-      </section>
+      </section>*/}
 
       {/* Visit Us / Location */}
       <section className="bg-ink-950 py-24 text-sand-100 lg:py-32">
         <div className="container-wide">
           <Reveal>
             <div className="mx-auto max-w-2xl text-center">
-              <p className="eyebrow text-brass-300">Visit Our Showroom</p>
+              <p className="eyebrow text-brass-300">
+                {info?.showroomEyebrow || 'Visit Our Showroom'}
+              </p>
               <h2 className="mt-4 font-display text-4xl font-700 text-sand-50 sm:text-5xl">
-                Come feel the grain for yourself
+                {info?.showroomTitle || 'Come feel the grain for yourself'}
               </h2>
               <p className="mt-5 text-lg leading-relaxed text-sand-100/70">
-                Our showroom is a tactile library of every finish and pattern we craft.
-                Walk on the floors, talk to our makers, and find the one that feels like home.
+                {info?.showroomDescription ||
+                  'Our showroom is a tactile library of every finish and pattern we craft. Walk on the floors, talk to our makers, and find the one that feels like home.'}
               </p>
             </div>
           </Reveal>
@@ -278,11 +280,11 @@ export default function Home() {
             </div>
           </Reveal>
 
-          <Reveal>
+          {/*<Reveal>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link to="/contact" className="btn-primary">
                 <Phone className="h-4 w-4" />
-                Book a Consultation
+                contact 
               </Link>
               <a
                 href={`mailto:${info?.email || 'contact@prketalandlos.com'}`}
@@ -292,7 +294,7 @@ export default function Home() {
                 {info?.email || 'contact@prketalandlos.com'}
               </a>
             </div>
-          </Reveal>
+          </Reveal>}*/}
         </div>
       </section>
     </>
