@@ -87,22 +87,25 @@ export default function Home() {
         <div className="container-wide relative z-10 pt-28">
           <div className="max-w-2xl">
             <p className="eyebrow animate-fade-up text-brass-300" style={{ animationDelay: '0.1s' }}>
-              Premium Wood Flooring · Since 1994
+              {info?.heroEyebrow || "Premium Wood Flooring · Since 1994"}
             </p>
             <h1
-              className="mt-5 font-display text-5xl font-700 leading-[1.05] text-sand-50 animate-fade-up sm:text-6xl lg:text-7xl"
+              className="mt-5 font-display text-5xl font-700 leading-[1.05] text-sand-50 animate-fade-up sm:text-6xl lg:text-7xl whitespace-pre-line"
               style={{ animationDelay: '0.2s' }}
             >
-              Timeless Elegance
-              <br />
-              for Your Floors
+              {info?.heroTitle || (
+                <>
+                  Timeless Elegance
+                  <br />
+                  for Your Floors
+                </>
+              )}
             </h1>
             <p
               className="mt-6 max-w-xl text-lg leading-relaxed text-sand-100/85 animate-fade-up"
               style={{ animationDelay: '0.35s' }}
             >
-              Discover handcrafted oak, walnut, herringbone and chevron parquet —
-              sustainably sourced and finished to last a lifetime.
+              {info?.heroDescription || "Discover handcrafted oak, walnut, herringbone and chevron parquet — sustainably sourced and finished to last a lifetime."}
             </p>
             <div
               className="mt-9 flex flex-wrap items-center gap-4 animate-fade-up"
