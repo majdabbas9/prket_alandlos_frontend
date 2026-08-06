@@ -126,10 +126,8 @@ export default function Products() {
       .then((data) => {
         if (data.success && Array.isArray(data.data)) {
           const mapped: Product[] = data.data.map((p: any) => {
-            let img = p.imageUrl || '';
-            if (img.startsWith('/uploads/')) {
-              img = `${SERVER_URL}${img}`;
-            }
+            const img = p.imageKey ? `${SERVER_URL}/api/products/photo?key=${encodeURIComponent(p.imageKey)}` : '';
+            console.log(img);
             return {
               id: p.id,
               name: p.title || 'Untitled Product',
@@ -198,14 +196,12 @@ export default function Products() {
                 <button
                   type="button"
                   onClick={() => toggle(woodTypes, type, setWoodTypes)}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                    active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
-                  }`}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
+                    }`}
                 >
                   <span
-                    className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${
-                      active ? 'border-walnut-800 bg-walnut-800 text-sand-50' : 'border-ink-300'
-                    }`}
+                    className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${active ? 'border-walnut-800 bg-walnut-800 text-sand-50' : 'border-ink-300'
+                      }`}
                   >
                     {active && <Check className="h-3.5 w-3.5" />}
                   </span>
@@ -227,14 +223,12 @@ export default function Products() {
                 <button
                   type="button"
                   onClick={() => toggle(finishes, finish, setFinishes)}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                    active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
-                  }`}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
+                    }`}
                 >
                   <span
-                    className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${
-                      active ? 'border-walnut-800 bg-walnut-800 text-sand-50' : 'border-ink-300'
-                    }`}
+                    className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${active ? 'border-walnut-800 bg-walnut-800 text-sand-50' : 'border-ink-300'
+                      }`}
                   >
                     {active && <Check className="h-3.5 w-3.5" />}
                   </span>
@@ -318,7 +312,7 @@ export default function Products() {
                     <h2 className="font-display text-4xl font-700 text-walnut-900 leading-tight">
                       {selectedProduct.name}
                     </h2>
-                    
+
                     {showPrice && (
                       <p className="mt-4 font-display text-2xl font-700 text-brass-600">
                         ${selectedProduct.pricePerSqm}
