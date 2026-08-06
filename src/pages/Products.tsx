@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { SlidersHorizontal, ArrowUpDown, X, ArrowRight, Check, ArrowLeft } from 'lucide-react';
 import { WOOD_TYPES, FINISHES, type WoodType, type Finish, type Product } from '@/data/products';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useInfo } from '@/hooks/useInfo';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 
@@ -18,10 +19,12 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
 function ProductCard({
   product,
   index,
+  showPrice,
   onViewDetails,
 }: {
   product: Product;
   index: number;
+  showPrice: boolean;
   onViewDetails: (product: Product) => void;
 }) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>();
@@ -48,10 +51,12 @@ function ProductCard({
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-start justify-between gap-3">
           <h3 className="font-display text-xl font-600 leading-tight text-walnut-900">{product.name}</h3>
-          <p className="shrink-0 font-display text-lg font-700 text-brass-600">
-            ${product.pricePerSqm}
-            <span className="block text-right text-xs font-400 text-ink-400">/ m²</span>
-          </p>
+          {showPrice && (
+            <p className="shrink-0 font-display text-lg font-700 text-brass-600">
+              ${product.pricePerSqm}
+              <span className="block text-right text-xs font-400 text-ink-400">/ m²</span>
+            </p>
+          )}
         </div>
 
         <p className="mt-3 text-sm leading-relaxed text-ink-500 line-clamp-2">{product.description}</p>
@@ -102,6 +107,8 @@ export default function Products() {
   const [finishes, setFinishes] = useState<Finish[]>([]);
   const [sort, setSort] = useState<SortKey>('featured');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const { info } = useInfo();
+  const showPrice = info?.showPrice ?? true;
 
   const handleViewDetails = (product: Product) => {
     setSelectedProduct(product);
@@ -312,10 +319,12 @@ export default function Products() {
                       {selectedProduct.name}
                     </h2>
                     
-                    <p className="mt-4 font-display text-2xl font-700 text-brass-600">
-                      ${selectedProduct.pricePerSqm}
-                      <span className="text-sm font-400 text-ink-400 ml-1">/ m²</span>
-                    </p>
+                    {showPrice && (
+                      <p className="mt-4 font-display text-2xl font-700 text-brass-600">
+                        ${selectedProduct.pricePerSqm}
+                        <span className="text-sm font-400 text-ink-400 ml-1">/ m²</span>
+                      </p>
+                    )}
 
                     <div className="mt-6 border-t border-ink-200/60 pt-6">
                       <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900 mb-3">
@@ -432,7 +441,7 @@ export default function Products() {
                 ) : filtered.length > 0 ? (
                   <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
                     {filtered.map((p, i) => (
-                      <ProductCard key={p.id} product={p} index={i} onViewDetails={handleViewDetails} />
+                      <ProductCard key={p.id} product={p} index={i} showPrice={showPrice} onViewDetails={handleViewDetails} />
                     ))}
                   </div>
                 ) : (

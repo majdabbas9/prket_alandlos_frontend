@@ -4,6 +4,9 @@ import { fileURLToPath, URL } from 'node:url';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  preview: {
+    port: 4173,
+  },
   plugins: [react()],
   resolve: {
     alias: {
