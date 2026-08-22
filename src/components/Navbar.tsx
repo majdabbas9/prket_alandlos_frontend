@@ -1,19 +1,52 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Menu, X, TreePine } from 'lucide-react';
+import { useLanguage } from '@/i18n/LanguageContext';
+import { LANGS } from '@/i18n/translations';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 const LOGO_URL = `${SERVER_URL}/api/logo`;
 
-const NAV_LINKS = [
-  { label: 'Home', to: '/' },
-  { label: 'Products', to: '/products' },
-  { label: 'Contact Us', to: '/contact' },
-];
+function LangPills({ variant }: { variant: 'light' | 'dark' }) {
+  const { lang, setLang } = useLanguage();
+  const active =
+    variant === 'light' ? 'bg-sand-50 text-ink-950' : 'bg-walnut-800 text-sand-50';
+  const inactive =
+    variant === 'light'
+      ? 'text-sand-50/80 hover:bg-white/10'
+      : 'text-ink-600 hover:bg-walnut-800/10';
+  const container = variant === 'light' ? 'border-sand-50/30' : 'border-ink-200';
+
+  return (
+    <div className={`flex items-center gap-1 rounded-full border p-1 ${container}`}>
+      {LANGS.map((l) => (
+        <button
+          key={l.code}
+          type="button"
+          onClick={() => setLang(l.code)}
+          aria-label={l.label}
+          aria-pressed={lang === l.code}
+          className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors duration-300 ${
+            lang === l.code ? active : inactive
+          }`}
+        >
+          {l.short}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export default function Navbar() {
+  const { t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const navLinks = [
+    { label: t('nav.home'), to: '/' },
+    { label: t('nav.products'), to: '/products' },
+    { label: t('nav.contact'), to: '/contact' },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -52,7 +85,7 @@ export default function Navbar() {
           >
             <img
               src={LOGO_URL}
-              alt="Prket Alandlos Logo"
+              alt={t('nav.logoAlt')}
               className="h-full w-full object-cover"
               onError={(e) => {
                 (e.currentTarget as HTMLElement).style.display = 'none';
@@ -76,33 +109,36 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <ul className="hidden items-center gap-9 md:flex">
-          {NAV_LINKS.map((link) => (
-            <li key={link.to}>
-              <NavLink
-                to={link.to}
-                className={({ isActive }) =>
-                  `relative text-sm font-medium tracking-wide transition-colors duration-200 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:bg-current after:transition-all after:duration-300 ${
-                    isActive
-                      ? 'after:w-full'
-                      : 'after:w-0 hover:after:w-full'
-                  } ${scrolled ? 'text-ink-700 hover:text-walnut-800' : 'text-sand-50/90 hover:text-sand-50'}`
-                }
-              >
-                {link.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+        <div className="hidden items-center gap-9 md:flex">
+          <ul className="flex items-center gap-9">
+            {navLinks.map((link) => (
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  className={({ isActive }) =>
+                    `relative text-sm font-medium tracking-wide transition-colors duration-200 after:absolute after:-bottom-1.5 after:start-0 after:h-px after:bg-current after:transition-all after:duration-300 ${
+                      isActive
+                        ? 'after:w-full'
+                        : 'after:w-0 hover:after:w-full'
+                    } ${scrolled ? 'text-ink-700 hover:text-walnut-800' : 'text-sand-50/90 hover:text-sand-50'}`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+          <LangPills variant={scrolled ? 'dark' : 'light'} />
+        </div>
 
         <Link to="/products" className="hidden md:inline-flex btn-primary !py-2.5 !px-6">
-          Explore Collection
+          {t('nav.explore')}
         </Link>
 
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
+          aria-label={t('nav.toggleMenu')}
           aria-expanded={open}
           className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-300 md:hidden ${
             scrolled ? 'text-walnut-900 hover:bg-walnut-800/10' : 'text-sand-50 hover:bg-white/10'
@@ -119,7 +155,7 @@ export default function Navbar() {
         }`}
       >
         <ul className="container-wide flex flex-col gap-1 py-5">
-          {NAV_LINKS.map((link) => (
+          {navLinks.map((link) => (
             <li key={link.to}>
               <NavLink
                 to={link.to}
@@ -136,9 +172,12 @@ export default function Navbar() {
               </NavLink>
             </li>
           ))}
+          <li className="mt-2 flex justify-center">
+            <LangPills variant="dark" />
+          </li>
           <li className="mt-2">
             <Link to="/products" onClick={() => setOpen(false)} className="btn-primary w-full">
-              Explore Collection
+              {t('nav.explore')}
             </Link>
           </li>
         </ul>

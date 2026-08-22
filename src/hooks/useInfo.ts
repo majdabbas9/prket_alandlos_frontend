@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 export interface Stat {
   value: string;
@@ -6,6 +7,7 @@ export interface Stat {
 }
 
 export interface StoreInfo {
+  lang?: string;
   showPrice: boolean;
   storeOpeningTime: string;
   email: string;
@@ -27,8 +29,15 @@ export interface StoreInfo {
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 
+// AM/PM markers across the supported languages (Arabic/Hebrew meridiem terms included)
+const MERIDIEM = "(?:AM|PM|am|pm|صباحًا|مساءً|לפנה״צ|אחה״צ)";
+
 export function parseOpeningTime(timeStr: string) {
-  const regex = /^(.*?)\s+(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)\s*—\s*\d{1,2}:\d{2}\s*(?:AM|PM|am|pm))$/i;
+  // Meridiem markers are optional so 24-hour formats (e.g. Hebrew "10:00 — 18:00") also parse
+  const regex = new RegExp(
+    `^(.*?)\\s+(\\d{1,2}:\\d{2}\\s*${MERIDIEM}?\\s*—\\s*\\d{1,2}:\\d{2}\\s*${MERIDIEM}?)$`,
+    'i',
+  );
   const match = timeStr.match(regex);
   if (match) {
     return {
@@ -43,12 +52,13 @@ export function parseOpeningTime(timeStr: string) {
 }
 
 export function useInfo() {
+  const { lang } = useLanguage();
   const [info, setInfo] = useState<StoreInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    fetch(`${SERVER_URL}/api/info`)
+    fetch(`${SERVER_URL}/api/info?lang=${lang}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error('Failed to fetch store info');
@@ -68,7 +78,7 @@ export function useInfo() {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [lang]);
 
   return { info, loading, error };
 }

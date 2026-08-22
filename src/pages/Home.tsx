@@ -1,47 +1,17 @@
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  Leaf,
-  Hammer,
-  ShieldCheck,
-  MapPin,
-  Clock,
-  Car,
-  Phone,
-  Mail,
-  Star,
-} from 'lucide-react';
+import { ArrowRight, MapPin, Clock, Car } from 'lucide-react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useInfo, parseOpeningTime } from '@/hooks/useInfo';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 const HERO_IMG = `${SERVER_URL}/api/homepage-image`;
-const ABOUT_IMG =
-  'https://images.pexels.com/photos/8146215/pexels-photo-8146215.jpeg?auto=compress&cs=tinysrgb&w=1200';
-
-const VALUES = [
-  {
-    icon: Hammer,
-    title: 'Handcrafted',
-    text: 'Every plank is brushed, oiled and finished by hand — never mass-produced.',
-  },
-  {
-    icon: Leaf,
-    title: 'Sustainably Sourced',
-    text: 'FSC-certified European hardwoods, harvested from responsibly managed forests.',
-  },
-  {
-    icon: ShieldCheck,
-    title: '25-Year Guarantee',
-    text: 'Built to outlive trends. Our floors come with a quarter-century structural warranty.',
-  },
-];
 
 const DEFAULT_STATS = [
-  { value: '30+', label: 'Years of Craft' },
-  { value: '1,200', label: 'Floors Installed' },
-  { value: '9', label: 'Wood Collections' },
-  { value: '4.9', label: 'Average Rating' },
+  { value: '30+', labelKey: 'home.statsYears' as const },
+  { value: '1,200', labelKey: 'home.statsFloors' as const },
+  { value: '9', labelKey: 'home.statsCollections' as const },
+  { value: '4.9', labelKey: 'home.statsRating' as const },
 ];
 
 function Reveal({
@@ -66,9 +36,13 @@ function Reveal({
 }
 
 export default function Home() {
+  const { t } = useLanguage();
   const { info } = useInfo();
   const parsedHours = info ? parseOpeningTime(info.storeOpeningTime) : null;
-  const statsToRender = info?.stats && info.stats.length > 0 ? info.stats : DEFAULT_STATS;
+  const statsToRender =
+    info?.stats && info.stats.length > 0
+      ? info.stats
+      : DEFAULT_STATS.map((s) => ({ value: s.value, label: t(s.labelKey) }));
 
   return (
     <>
@@ -77,49 +51,43 @@ export default function Home() {
         <div className="absolute inset-0">
           <img
             src={HERO_IMG}
-            alt="Premium parquet flooring in a sunlit living room"
+            alt={t('home.heroImgAlt')}
             className="h-full w-full object-cover animate-slow-zoom"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-ink-950/85 via-ink-950/55 to-ink-950/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-ink-950/85 via-ink-950/55 to-ink-950/20 rtl:bg-gradient-to-l" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent" />
         </div>
 
         <div className="container-wide relative z-10 pt-28">
           <div className="max-w-2xl">
             <p className="eyebrow animate-fade-up text-brass-300" style={{ animationDelay: '0.1s' }}>
-              {info?.heroEyebrow || "Premium Wood Flooring · Since 1994"}
+              {info?.heroEyebrow || t('home.fallbackHeroEyebrow')}
             </p>
             <h1
               className="mt-5 font-display text-5xl font-700 leading-[1.05] text-sand-50 animate-fade-up sm:text-6xl lg:text-7xl whitespace-pre-line"
               style={{ animationDelay: '0.2s' }}
             >
-              {info?.heroTitle || (
-                <>
-                  Timeless Elegance
-                  <br />
-                  for Your Floors
-                </>
-              )}
+              {info?.heroTitle || t('home.fallbackHeroTitle')}
             </h1>
             <p
               className="mt-6 max-w-xl text-lg leading-relaxed text-sand-100/85 animate-fade-up"
               style={{ animationDelay: '0.35s' }}
             >
-              {info?.heroDescription || "Discover handcrafted oak, walnut, herringbone and chevron parquet — sustainably sourced and finished to last a lifetime."}
+              {info?.heroDescription || t('home.fallbackHeroDescription')}
             </p>
             <div
               className="mt-9 flex flex-wrap items-center gap-4 animate-fade-up"
               style={{ animationDelay: '0.5s' }}
             >
               <Link to="/products" className="btn-primary group">
-                Explore the Collection
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                {t('home.exploreCollection')}
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
               </Link>
               <Link
                 to="/contact"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-sand-50/30 px-7 py-3.5 text-sm font-medium tracking-wide text-sand-50 transition-all duration-300 hover:border-sand-50 hover:bg-sand-50/10"
               >
-                Visit Our Showroom
+                {t('home.visitShowroom')}
               </Link>
             </div>
           </div>
@@ -208,14 +176,13 @@ export default function Home() {
           <Reveal>
             <div className="mx-auto max-w-2xl text-center">
               <p className="eyebrow text-brass-300">
-                {info?.showroomEyebrow || 'Visit Our Showroom'}
+                {info?.showroomEyebrow || t('home.fallbackShowroomEyebrow')}
               </p>
               <h2 className="mt-4 font-display text-4xl font-700 text-sand-50 sm:text-5xl">
-                {info?.showroomTitle || 'Come feel the grain for yourself'}
+                {info?.showroomTitle || t('home.fallbackShowroomTitle')}
               </h2>
               <p className="mt-5 text-lg leading-relaxed text-sand-100/70">
-                {info?.showroomDescription ||
-                  'Our showroom is a tactile library of every finish and pattern we craft. Walk on the floors, talk to our makers, and find the one that feels like home.'}
+                {info?.showroomDescription || t('home.fallbackShowroomDescription')}
               </p>
             </div>
           </Reveal>
@@ -224,7 +191,7 @@ export default function Home() {
             <Reveal>
               <div className="h-full rounded-2xl border border-sand-100/10 bg-sand-100/5 p-7 backdrop-blur-sm transition-colors duration-300 hover:border-brass-400/40 hover:bg-sand-100/10">
                 <MapPin className="h-7 w-7 text-brass-400" />
-                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">Our Address</h3>
+                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">{t('home.ourAddress')}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-sand-100/70">
                   {info?.location || 'kafr kanna, Isreal'}
                 </p>
@@ -233,7 +200,7 @@ export default function Home() {
             <Reveal delay={120}>
               <div className="h-full rounded-2xl border border-sand-100/10 bg-sand-100/5 p-7 backdrop-blur-sm transition-colors duration-300 hover:border-brass-400/40 hover:bg-sand-100/10">
                 <Clock className="h-7 w-7 text-brass-400" />
-                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">Opening Hours</h3>
+                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">{t('home.openingHours')}</h3>
                 <ul className="mt-3 space-y-1.5 text-sm text-sand-100/70">
                   {parsedHours ? (
                     <li>
@@ -242,8 +209,8 @@ export default function Home() {
                     </li>
                   ) : (
                     <>
-                      <li>Sunday — Thursday: 9:00 AM — 7:00 PM</li>
-                      <li>Friday — Saturday: 10:00 AM — 9:00 PM</li>
+                      <li>{t('home.fallbackHoursSunThu')}</li>
+                      <li>{t('home.fallbackHoursFriSat')}</li>
                     </>
                   )}
                 </ul>
@@ -252,9 +219,11 @@ export default function Home() {
             <Reveal delay={240}>
               <div className="h-full rounded-2xl border border-sand-100/10 bg-sand-100/5 p-7 backdrop-blur-sm transition-colors duration-300 hover:border-brass-400/40 hover:bg-sand-100/10">
                 <Car className="h-7 w-7 text-brass-400" />
-                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">Getting Here</h3>
+                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">{t('home.gettingHere')}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-sand-100/70">
-                  Free on-site parking for all showroom visitors. Located in {info?.location.split(',')[0] || 'kafr kanna'}.
+                  {t('home.gettingHereText', {
+                    location: info?.location.split(',')[0] || 'kafr kanna',
+                  })}
                 </p>
               </div>
             </Reveal>
@@ -276,9 +245,9 @@ export default function Home() {
                   <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brass-400 text-ink-950 shadow-lift">
                     <MapPin className="h-7 w-7" />
                   </span>
-                  <p className="mt-4 font-display text-lg font-600 text-sand-50">Prket Alandlos Showroom</p>
+                  <p className="mt-4 font-display text-lg font-600 text-sand-50">{t('home.showroomName')}</p>
                   <p className="mt-1 text-sm text-sand-100/60">{info?.location || 'kafr kanna, Isreal'}</p>
-                  
+
                   <div className="mt-5 flex items-center justify-center gap-3">
                     <a
                       href={`https://maps.google.com/?q=${encodeURIComponent(info?.location || 'Alandlos Parquet Kafr Kanna')}`}
@@ -286,7 +255,7 @@ export default function Home() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-full bg-brass-400 px-5 py-2 text-xs font-bold uppercase tracking-wider text-ink-950 transition-all duration-300 hover:bg-brass-300 hover:scale-105 active:scale-95 shadow-md"
                     >
-                      Google Maps
+                      {t('home.googleMaps')}
                     </a>
                     <a
                       href={`https://waze.com/ul?q=${encodeURIComponent(info?.location || 'Alandlos Parquet Kafr Kanna')}&navigate=yes`}
@@ -294,7 +263,7 @@ export default function Home() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-full bg-sky-500 px-5 py-2 text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-sky-400 hover:scale-105 active:scale-95 shadow-md"
                     >
-                      Waze
+                      {t('home.waze')}
                     </a>
                   </div>
                 </div>

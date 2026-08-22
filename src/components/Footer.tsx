@@ -1,30 +1,32 @@
 import { Link } from 'react-router-dom';
-import { TreePine, Instagram, Facebook, Twitter, MapPin, Clock, Mail, Phone, MessageCircle } from 'lucide-react';
+import { TreePine, Instagram, MapPin, Clock, Phone, MessageCircle } from 'lucide-react';
 import { useInfo, parseOpeningTime } from '@/hooks/useInfo';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 const LOGO_URL = `${SERVER_URL}/api/logo`;
 
-const QUICK_LINKS = [
-  { label: 'Home', to: '/' },
-  { label: 'Products', to: '/products' },
-  { label: 'Contact Us', to: '/contact' },
-];
-
-const HOURS = [
-  { day: 'Sunday — Thursday', time: '9:00 AM — 7:00 PM' },
-  { day: 'Friday — Saturday', time: '10:00 AM — 9:00 PM' },
-];
-
 export default function Footer() {
+  const { t } = useLanguage();
   const { info } = useInfo();
+
+  const quickLinks = [
+    { label: t('nav.home'), to: '/' },
+    { label: t('nav.products'), to: '/products' },
+    { label: t('nav.contact'), to: '/contact' },
+  ];
+
+  const hoursFallback = [
+    { day: t('footer.hoursSunThu'), time: t('footer.hoursSunThuTime') },
+    { day: t('footer.hoursFriSat'), time: t('footer.hoursFriSatTime') },
+  ];
   const parsedHours = info ? parseOpeningTime(info.storeOpeningTime) : null;
 
   const whatsappUrl = info?.whatsappLink ? (info.whatsappLink.startsWith('http') ? info.whatsappLink : `https://${info.whatsappLink}`) : '#';
 
   const socialLinks = [
-    { Icon: Instagram, href: 'https://www.instagram.com/prket_alandlos/', label: 'Instagram' },
-    ...(info?.whatsappLink ? [{ Icon: MessageCircle, href: whatsappUrl, label: 'WhatsApp' }] : []),
+    { Icon: Instagram, href: 'https://www.instagram.com/prket_alandlos/', label: t('footer.instagram') },
+    ...(info?.whatsappLink ? [{ Icon: MessageCircle, href: whatsappUrl, label: t('footer.whatsapp') }] : []),
   ];
 
   return (
@@ -35,7 +37,7 @@ export default function Footer() {
             <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-sand-100/20 bg-walnut-800 text-sand-50">
               <img
                 src={LOGO_URL}
-                alt="Prket Alandlos Logo"
+                alt={t('nav.logoAlt')}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   (e.currentTarget as HTMLElement).style.display = 'none';
@@ -53,8 +55,7 @@ export default function Footer() {
             <span className="font-display text-xl font-700 text-sand-50">Prket Alandlos</span>
           </Link>
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-sand-100/70">
-            {info?.description ||
-              'Premium wood flooring, crafted with patience. Sustainably sourced hardwoods finished by hand for floors that last generations.'}
+            {info?.description || t('footer.fallbackDescription')}
           </p>
           <div className="mt-6 flex gap-3">
             {socialLinks.map(({ Icon, href, label }, i) => (
@@ -73,9 +74,9 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-sand-50">Quick Links</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-sand-50">{t('footer.quickLinks')}</h3>
           <ul className="mt-5 space-y-3">
-            {QUICK_LINKS.map((link) => (
+            {quickLinks.map((link) => (
               <li key={link.to}>
                 <Link
                   to={link.to}
@@ -89,7 +90,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-sand-50">Visit Us</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-sand-50">{t('footer.visitUs')}</h3>
           <ul className="mt-5 space-y-4 text-sm text-sand-100/70">
             <li className="flex gap-3">
               <MapPin className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
@@ -97,13 +98,13 @@ export default function Footer() {
             </li>
             <li className="flex gap-3">
               <Phone className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
-              <a href={`tel:${info?.phone || '053-3919190'}`} className="hover:text-brass-300">
+              <a href={`tel:${info?.phone || '053-3919190'}`} className="hover:text-brass-300" dir="ltr">
                 {info?.phone || '053-3919190'}
               </a>
             </li>
             <li className="flex gap-3">
               <MessageCircle className="mt-0.5 h-4.5 w-4.5 shrink-0 text-brass-400" />
-              <a href={whatsappUrl} className="hover:text-brass-300">
+              <a href={whatsappUrl} className="hover:text-brass-300" dir="ltr">
                 {info?.whatsappLink || 'wa.me/+972533919190'}
               </a>
             </li>
@@ -113,7 +114,7 @@ export default function Footer() {
         <div>
           <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-sand-50">
             <Clock className="h-4 w-4 text-brass-400" />
-            Opening Hours
+            {t('footer.openingHours')}
           </h3>
           <ul className="mt-5 space-y-3">
             {parsedHours ? (
@@ -122,7 +123,7 @@ export default function Footer() {
                 <p className="text-sand-100/60">{parsedHours.time}</p>
               </li>
             ) : (
-              HOURS.map((h) => (
+              hoursFallback.map((h) => (
                 <li key={h.day} className="text-sm">
                   <p className="text-sand-100/90">{h.day}</p>
                   <p className="text-sand-100/60">{h.time}</p>
@@ -135,8 +136,8 @@ export default function Footer() {
 
       <div className="border-t border-sand-100/10">
         <div className="container-wide flex flex-col items-center justify-between gap-3 py-6 text-xs text-sand-100/50 sm:flex-row">
-          <p>© {new Date().getFullYear()} Prket Alandlos. All rights reserved.</p>
-          <p>Crafted with care for floors that tell a story.</p>
+          <p>{t('footer.rights', { year: new Date().getFullYear() })}</p>
+          <p>{t('footer.tagline')}</p>
         </div>
       </div>
     </footer>

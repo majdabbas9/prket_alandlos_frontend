@@ -4,17 +4,25 @@ import { SlidersHorizontal, ArrowUpDown, X, ArrowRight, Check, ArrowLeft } from 
 import { WOOD_TYPES, FINISHES, type WoodType, type Finish, type Product } from '@/data/products';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useInfo } from '@/hooks/useInfo';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 
 type SortKey = 'featured' | 'price-asc' | 'price-desc' | 'name-asc';
 
-const SORT_OPTIONS: { value: SortKey; label: string }[] = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'name-asc', label: 'Name: A to Z' },
-];
+/** Raw product shape returned by GET /api/products before mapping to the frontend Product type. */
+interface ApiProduct {
+  id: string;
+  title?: string;
+  woodType?: WoodType;
+  finish?: Finish;
+  thickness?: string;
+  plankSize?: string;
+  description?: string;
+  price?: number;
+  imageKey?: string;
+  tag?: string;
+}
 
 function ProductCard({
   product,
@@ -27,6 +35,7 @@ function ProductCard({
   showPrice: boolean;
   onViewDetails: (product: Product) => void;
 }) {
+  const { t } = useLanguage();
   const { ref, visible } = useScrollReveal<HTMLDivElement>();
   return (
     <div
@@ -42,7 +51,7 @@ function ProductCard({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-950/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         {product.tag && (
-          <span className="absolute left-4 top-4 rounded-full bg-walnut-800 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-sand-50 shadow-soft">
+          <span className="absolute start-4 top-4 rounded-full bg-walnut-800 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-sand-50 shadow-soft">
             {product.tag}
           </span>
         )}
@@ -54,7 +63,7 @@ function ProductCard({
           {showPrice && (
             <p className="shrink-0 font-display text-lg font-700 text-brass-600">
               ${product.pricePerSqm}
-              <span className="block text-right text-xs font-400 text-ink-400">/ m²</span>
+              <span className="block text-end text-xs font-400 text-ink-400">{t('products.perSqm')}</span>
             </p>
           )}
         </div>
@@ -63,15 +72,15 @@ function ProductCard({
 
         <dl className="mt-5 grid grid-cols-3 gap-2 border-t border-ink-200/60 pt-5">
           <div>
-            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">Thickness</dt>
+            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">{t('products.thickness')}</dt>
             <dd className="mt-1 text-sm font-medium text-ink-800">{product.thickness}</dd>
           </div>
           <div>
-            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">Plank Size</dt>
+            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">{t('products.plankSize')}</dt>
             <dd className="mt-1 text-sm font-medium text-ink-800">{product.plankSize}</dd>
           </div>
           <div>
-            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">Finish</dt>
+            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">{t('products.finish')}</dt>
             <dd className="mt-1 text-sm font-medium text-ink-800">{product.finish}</dd>
           </div>
         </dl>
@@ -90,8 +99,8 @@ function ProductCard({
           onClick={() => onViewDetails(product)}
           className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-walnut-800/25 py-3 text-sm font-medium tracking-wide text-walnut-800 transition-all duration-300 hover:bg-walnut-800 hover:text-sand-50 group/btn"
         >
-          View Details
-          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+          {t('products.viewDetails')}
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1 rtl:rotate-180 rtl:group-hover/btn:-translate-x-1" />
         </button>
       </div>
     </div>
@@ -99,6 +108,7 @@ function ProductCard({
 }
 
 export default function Products() {
+  const { t } = useLanguage();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -109,6 +119,13 @@ export default function Products() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const { info } = useInfo();
   const showPrice = info?.showPrice ?? true;
+
+  const sortOptions: { value: SortKey; label: string }[] = [
+    { value: 'featured', label: t('products.sortFeatured') },
+    { value: 'price-asc', label: t('products.sortPriceAsc') },
+    { value: 'price-desc', label: t('products.sortPriceDesc') },
+    { value: 'name-asc', label: t('products.sortNameAsc') },
+  ];
 
   const handleViewDetails = (product: Product) => {
     setSelectedProduct(product);
@@ -125,7 +142,7 @@ export default function Products() {
       })
       .then((data) => {
         if (data.success && Array.isArray(data.data)) {
-          const mapped: Product[] = data.data.map((p: any) => {
+          const mapped: Product[] = data.data.map((p: ApiProduct) => {
             const img = p.imageKey ? `${SERVER_URL}/api/products/photo?key=${encodeURIComponent(p.imageKey)}` : '';
             console.log(img);
             return {
@@ -187,7 +204,7 @@ export default function Products() {
   const FilterPanel = () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900">Wood Type</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900">{t('products.woodType')}</h3>
         <ul className="mt-4 space-y-2.5">
           {WOOD_TYPES.map((type) => {
             const active = woodTypes.includes(type);
@@ -214,7 +231,7 @@ export default function Products() {
       </div>
 
       <div>
-        <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900">Finish</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900">{t('products.finish')}</h3>
         <ul className="mt-4 space-y-2.5">
           {FINISHES.map((finish) => {
             const active = finishes.includes(finish);
@@ -247,7 +264,7 @@ export default function Products() {
           className="inline-flex items-center gap-1.5 text-sm font-medium text-brass-700 hover:text-brass-800"
         >
           <X className="h-4 w-4" />
-          Clear all filters
+          {t('products.clearAllFilters')}
         </button>
       )}
     </div>
@@ -258,13 +275,12 @@ export default function Products() {
       {/* Page header */}
       <section className="bg-ink-950 pt-36 pb-20 text-sand-100 lg:pt-44 lg:pb-28">
         <div className="container-wide">
-          <p className="eyebrow text-brass-300">Our Collection</p>
+          <p className="eyebrow text-brass-300">{t('products.pageEyebrow')}</p>
           <h1 className="mt-4 max-w-3xl font-display text-5xl font-700 leading-[1.05] text-sand-50 sm:text-6xl">
-            Flooring that grounds a home
+            {t('products.pageTitle')}
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-sand-100/70">
-            Explore our collections of oak, walnut, herringbone and chevron parquet.
-            Each floor is hand-finished and backed by a 25-year structural guarantee.
+            {t('products.pageDescription')}
           </p>
         </div>
       </section>
@@ -281,8 +297,8 @@ export default function Products() {
                   onClick={() => setSelectedProduct(null)}
                   className="inline-flex items-center gap-2 text-sm font-medium text-walnut-800 transition-colors hover:text-walnut-600 font-semibold"
                 >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Collection
+                  <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+                  {t('products.backToCollection')}
                 </button>
                 <span className="text-ink-300">/</span>
                 <span className="text-sm font-medium text-ink-600">{selectedProduct.name}</span>
@@ -316,13 +332,13 @@ export default function Products() {
                     {showPrice && (
                       <p className="mt-4 font-display text-2xl font-700 text-brass-600">
                         ${selectedProduct.pricePerSqm}
-                        <span className="text-sm font-400 text-ink-400 ml-1">/ m²</span>
+                        <span className="text-sm font-400 text-ink-400 ms-1">{t('products.perSqm')}</span>
                       </p>
                     )}
 
                     <div className="mt-6 border-t border-ink-200/60 pt-6">
                       <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900 mb-3">
-                        Description
+                        {t('products.description')}
                       </h3>
                       <p className="text-base leading-relaxed text-ink-600">
                         {selectedProduct.description}
@@ -331,23 +347,23 @@ export default function Products() {
 
                     <div className="mt-8 border-t border-ink-200/60 pt-6">
                       <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900 mb-4">
-                        Specifications
+                        {t('products.specifications')}
                       </h3>
                       <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">Wood Type</dt>
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">{t('products.woodType')}</dt>
                           <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.woodType}</dd>
                         </div>
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">Finish</dt>
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">{t('products.finish')}</dt>
                           <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.finish}</dd>
                         </div>
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">Thickness</dt>
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">{t('products.thickness')}</dt>
                           <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.thickness}</dd>
                         </div>
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">Plank Size</dt>
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">{t('products.plankSize')}</dt>
                           <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.plankSize}</dd>
                         </div>
                       </dl>
@@ -360,8 +376,8 @@ export default function Products() {
                       state={{ fromProduct: selectedProduct.name }}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-walnut-800 py-4 text-base font-semibold tracking-wide text-sand-50 transition-all duration-300 hover:bg-walnut-700 hover:shadow-lift"
                     >
-                      Inquire About This Floor
-                      <ArrowRight className="h-5 w-5" />
+                      {t('products.inquire')}
+                      <ArrowRight className="h-5 w-5 rtl:rotate-180" />
                     </Link>
                   </div>
                 </div>
@@ -374,7 +390,7 @@ export default function Products() {
                 <div className="sticky top-28">
                   <div className="mb-6 flex items-center gap-2">
                     <SlidersHorizontal className="h-5 w-5 text-walnut-800" />
-                    <h2 className="font-display text-lg font-600 text-walnut-900">Filters</h2>
+                    <h2 className="font-display text-lg font-600 text-walnut-900">{t('products.filters')}</h2>
                   </div>
                   <FilterPanel />
                 </div>
@@ -390,7 +406,7 @@ export default function Products() {
                       className="inline-flex items-center gap-2 rounded-full border border-ink-200 px-4 py-2.5 text-sm font-medium text-ink-700 transition-colors hover:border-walnut-800 hover:text-walnut-800 lg:hidden"
                     >
                       <SlidersHorizontal className="h-4 w-4" />
-                      Filters
+                      {t('products.filters')}
                       {activeCount > 0 && (
                         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-walnut-800 text-xs text-sand-50">
                           {activeCount}
@@ -398,15 +414,16 @@ export default function Products() {
                       )}
                     </button>
                     <p className="text-sm text-ink-500">
-                      Showing <span className="font-semibold text-walnut-900">{filtered.length}</span>{' '}
-                      {filtered.length === 1 ? 'product' : 'products'}
+                      {filtered.length === 1
+                        ? t('products.showingOne', { count: filtered.length })
+                        : t('products.showingMany', { count: filtered.length })}
                     </p>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <ArrowUpDown className="h-4 w-4 text-ink-400" />
                     <label htmlFor="sort" className="sr-only">
-                      Sort by
+                      {t('products.sortLabel')}
                     </label>
                     <select
                       id="sort"
@@ -414,7 +431,7 @@ export default function Products() {
                       onChange={(e) => setSort(e.target.value as SortKey)}
                       className="rounded-full border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-700 transition-colors focus:border-walnut-500 focus:outline-none focus:ring-2 focus:ring-walnut-500/20"
                     >
-                      {SORT_OPTIONS.map((o) => (
+                      {sortOptions.map((o) => (
                         <option key={o.value} value={o.value}>
                           {o.label}
                         </option>
@@ -429,7 +446,7 @@ export default function Products() {
                   </div>
                 ) : error ? (
                   <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
-                    <p className="font-display text-lg font-600 text-red-600">Failed to load products</p>
+                    <p className="font-display text-lg font-600 text-red-600">{t('products.loadError')}</p>
                     <p className="mt-2 text-sm text-ink-500">{error}</p>
                   </div>
                 ) : filtered.length > 0 ? (
@@ -440,14 +457,14 @@ export default function Products() {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink-300 py-24 text-center">
-                    <p className="font-display text-xl font-600 text-walnut-900">No floors match those filters</p>
-                    <p className="mt-2 text-sm text-ink-500">Try removing a filter to see more options.</p>
+                    <p className="font-display text-xl font-600 text-walnut-900">{t('products.noResults')}</p>
+                    <p className="mt-2 text-sm text-ink-500">{t('products.noResultsHint')}</p>
                     <button
                       type="button"
                       onClick={clearAll}
                       className="mt-6 inline-flex items-center gap-2 rounded-full bg-walnut-800 px-6 py-3 text-sm font-medium text-sand-50 transition-colors hover:bg-walnut-700"
                     >
-                      Clear filters
+                      {t('products.clearFilters')}
                     </button>
                   </div>
                 )}
@@ -466,11 +483,11 @@ export default function Products() {
           />
           <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-sand-50 p-6 shadow-lift">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="font-display text-xl font-600 text-walnut-900">Filters</h2>
+              <h2 className="font-display text-xl font-600 text-walnut-900">{t('products.filters')}</h2>
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(false)}
-                aria-label="Close filters"
+                aria-label={t('products.closeFilters')}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-ink-100 text-ink-700 hover:bg-ink-200"
               >
                 <X className="h-5 w-5" />
@@ -482,7 +499,7 @@ export default function Products() {
               onClick={() => setMobileFiltersOpen(false)}
               className="mt-8 w-full btn-primary"
             >
-              Show {filtered.length} results
+              {t('products.showResults', { count: filtered.length })}
             </button>
           </div>
         </div>

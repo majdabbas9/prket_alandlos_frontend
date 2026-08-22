@@ -1,12 +1,12 @@
 import {
   Phone,
-  Mail,
   MapPin,
   Clock,
   MessageCircle,
 } from 'lucide-react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useInfo, parseOpeningTime } from '@/hooks/useInfo';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 function Reveal({
   children,
@@ -30,27 +30,34 @@ function Reveal({
 }
 
 export default function Contact() {
+  const { t } = useLanguage();
   const { info } = useInfo();
   const parsedHours = info ? parseOpeningTime(info.storeOpeningTime) : null;
 
   const contactCards = [
     {
       icon: Phone,
-      title: 'Call Us',
-      lines: [info?.phone || '053-3919190', parsedHours ? `${parsedHours.days}, ${parsedHours.time}` : 'Mon — Sat, 9am to 7pm'],
+      title: t('contact.callUs'),
+      lines: [
+        info?.phone || '053-3919190',
+        parsedHours ? `${parsedHours.days}, ${parsedHours.time}` : t('contact.fallbackHours'),
+      ],
       href: `tel:${info?.phone || '053-3919190'}`,
+      ltr: true,
     },
     {
       icon: MessageCircle,
-      title: 'WhatsApp Us',
-      lines: [info?.whatsappLink || 'wa.me/+972533919190', 'Click to chat with us'],
+      title: t('contact.whatsappUs'),
+      lines: [info?.whatsappLink || 'wa.me/+972533919190', t('contact.clickToChat')],
       href: info?.whatsappLink ? (info.whatsappLink.startsWith('http') ? info.whatsappLink : `https://${info.whatsappLink}`) : 'https://wa.me/+972533919190',
+      ltr: true,
     },
     {
       icon: MapPin,
-      title: 'Visit the Showroom',
+      title: t('contact.visitShowroom'),
       lines: [info?.location || 'kafr kanna, Isreal'],
       href: '#location',
+      ltr: false,
     },
   ];
 
@@ -59,13 +66,12 @@ export default function Contact() {
       {/* Header */}
       <section className="bg-ink-950 pt-36 pb-20 text-sand-100 lg:pt-44 lg:pb-28">
         <div className="container-wide">
-          <p className="eyebrow text-brass-300">{info?.contactEyebrow || 'Get in Touch'}</p>
+          <p className="eyebrow text-brass-300">{info?.contactEyebrow || t('contact.fallbackEyebrow')}</p>
           <h1 className="mt-4 max-w-3xl font-display text-5xl font-700 leading-[1.05] text-sand-50 sm:text-6xl">
-            {info?.contactTitle || "Let's talk about your floor"}
+            {info?.contactTitle || t('contact.fallbackTitle')}
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-sand-100/70">
-            {info?.contactDescription ||
-              "Whether you're planning a renovation or just exploring finishes, our specialists are here to help. Reach out and we'll find the find the right wood for your space."}
+            {info?.contactDescription || t('contact.fallbackDescription')}
           </p>
         </div>
       </section>
@@ -84,8 +90,12 @@ export default function Contact() {
                     <card.icon className="h-6 w-6" />
                   </span>
                   <h3 className="mt-5 font-display text-xl font-600 text-walnut-900">{card.title}</h3>
-                  {card.lines.map((line) => (
-                    <p key={line} className="mt-1 text-sm leading-relaxed text-ink-500">
+                  {card.lines.map((line, lineIndex) => (
+                    <p
+                      key={line}
+                      dir={card.ltr && lineIndex === 0 ? 'ltr' : undefined}
+                      className="mt-1 text-sm leading-relaxed text-ink-500"
+                    >
                       {line}
                     </p>
                   ))}
@@ -105,7 +115,7 @@ export default function Contact() {
                 <div className="rounded-2xl border border-ink-200/70 bg-white p-8 shadow-soft">
                   <h3 className="flex items-center gap-2 font-display text-2xl font-700 text-walnut-900">
                     <Clock className="h-6 w-6 text-brass-500" />
-                    Store Hours
+                    {t('contact.storeHours')}
                   </h3>
                   <ul className="mt-5 divide-y divide-ink-100">
                     {parsedHours ? (
@@ -131,7 +141,7 @@ export default function Contact() {
                 <div className="rounded-2xl border border-ink-200/70 bg-white p-8 shadow-soft">
                   <h3 className="flex items-center gap-2 font-display text-2xl font-700 text-walnut-900">
                     <MapPin className="h-6 w-6 text-brass-500" />
-                    How to Find Us
+                    {t('contact.howToFindUs')}
                   </h3>
                   <p className="mt-4 text-sm leading-relaxed text-ink-600">
                     {info?.location || 'kafr kanna, Isreal'}
@@ -154,7 +164,7 @@ export default function Contact() {
                     <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-walnut-800 text-sand-50 shadow-card">
                       <MapPin className="h-6 w-6" />
                     </span>
-                    <p className="mt-3 text-sm font-medium text-walnut-900 font-display">Prket Alandlos Showroom</p>
+                    <p className="mt-3 text-sm font-medium text-walnut-900 font-display">{t('home.showroomName')}</p>
                     <p className="mt-1 text-xs text-ink-500">{info?.location || 'kafr kanna, Isreal'}</p>
 
                     <div className="mt-4 flex items-center justify-center gap-2">
@@ -164,7 +174,7 @@ export default function Contact() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 rounded-full bg-walnut-800 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-sand-50 transition-all duration-300 hover:bg-walnut-700 hover:scale-105 active:scale-95 shadow-sm"
                       >
-                        Google Maps
+                        {t('home.googleMaps')}
                       </a>
                       <a
                         href={`https://waze.com/ul?q=${encodeURIComponent(info?.location || 'Alandlos Parquet Kafr Kanna')}&navigate=yes`}
@@ -172,7 +182,7 @@ export default function Contact() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 rounded-full bg-sky-500 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-sky-400 hover:scale-105 active:scale-95 shadow-sm"
                       >
-                        Waze
+                        {t('home.waze')}
                       </a>
                     </div>
                   </div>
