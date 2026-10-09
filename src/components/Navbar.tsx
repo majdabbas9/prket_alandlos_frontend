@@ -9,8 +9,7 @@ const LOGO_URL = `${SERVER_URL}/api/logo`;
 
 function LangPills({ variant }: { variant: 'light' | 'dark' }) {
   const { lang, setLang } = useLanguage();
-  const active =
-    variant === 'light' ? 'bg-sand-50 text-ink-950' : 'bg-walnut-800 text-sand-50';
+  const active = variant === 'light' ? 'bg-sand-50 text-ink-950' : 'bg-walnut-800 text-sand-50';
   const inactive =
     variant === 'light'
       ? 'text-sand-50/80 hover:bg-white/10'
@@ -65,17 +64,11 @@ export default function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-sand-50/90 shadow-soft backdrop-blur-md'
-          : 'bg-transparent'
+        scrolled ? 'bg-sand-50/90 shadow-soft backdrop-blur-md' : 'bg-transparent'
       }`}
     >
       <nav className="container-wide flex h-20 items-center justify-between">
-        <Link
-          to="/"
-          onClick={() => setOpen(false)}
-          className="flex items-center gap-2.5"
-        >
+        <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-2.5">
           <span
             className={`flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border transition-colors duration-300 ${
               scrolled
@@ -117,9 +110,7 @@ export default function Navbar() {
                   to={link.to}
                   className={({ isActive }) =>
                     `relative text-sm font-medium tracking-wide transition-colors duration-200 after:absolute after:-bottom-1.5 after:start-0 after:h-px after:bg-current after:transition-all after:duration-300 ${
-                      isActive
-                        ? 'after:w-full'
-                        : 'after:w-0 hover:after:w-full'
+                      isActive ? 'after:w-full' : 'after:w-0 hover:after:w-full'
                     } ${scrolled ? 'text-ink-700 hover:text-walnut-800' : 'text-sand-50/90 hover:text-sand-50'}`
                   }
                 >
