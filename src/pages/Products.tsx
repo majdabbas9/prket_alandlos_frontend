@@ -59,28 +59,40 @@ function ProductCard({
 
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-display text-xl font-600 leading-tight text-walnut-900">{product.name}</h3>
+          <h3 className="font-display text-xl font-600 leading-tight text-walnut-900">
+            {product.name}
+          </h3>
           {showPrice && (
             <p className="shrink-0 font-display text-lg font-700 text-brass-600">
               ${product.pricePerSqm}
-              <span className="block text-end text-xs font-400 text-ink-400">{t('products.perSqm')}</span>
+              <span className="block text-end text-xs font-400 text-ink-400">
+                {t('products.perSqm')}
+              </span>
             </p>
           )}
         </div>
 
-        <p className="mt-3 text-sm leading-relaxed text-ink-500 line-clamp-2">{product.description}</p>
+        <p className="mt-3 text-sm leading-relaxed text-ink-500 line-clamp-2">
+          {product.description}
+        </p>
 
         <dl className="mt-5 grid grid-cols-3 gap-2 border-t border-ink-200/60 pt-5">
           <div>
-            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">{t('products.thickness')}</dt>
+            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">
+              {t('products.thickness')}
+            </dt>
             <dd className="mt-1 text-sm font-medium text-ink-800">{product.thickness}</dd>
           </div>
           <div>
-            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">{t('products.plankSize')}</dt>
+            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">
+              {t('products.plankSize')}
+            </dt>
             <dd className="mt-1 text-sm font-medium text-ink-800">{product.plankSize}</dd>
           </div>
           <div>
-            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">{t('products.finish')}</dt>
+            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">
+              {t('products.finish')}
+            </dt>
             <dd className="mt-1 text-sm font-medium text-ink-800">{product.finish}</dd>
           </div>
         </dl>
@@ -143,7 +155,9 @@ export default function Products() {
       .then((data) => {
         if (data.success && Array.isArray(data.data)) {
           const mapped: Product[] = data.data.map((p: ApiProduct) => {
-            const img = p.imageKey ? `${SERVER_URL}/api/products/photo?key=${encodeURIComponent(p.imageKey)}` : '';
+            const img = p.imageKey
+              ? `${SERVER_URL}/api/products/photo?key=${encodeURIComponent(p.imageKey)}`
+              : '';
             console.log(img);
             return {
               id: p.id,
@@ -204,7 +218,9 @@ export default function Products() {
   const FilterPanel = () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900">{t('products.woodType')}</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900">
+          {t('products.woodType')}
+        </h3>
         <ul className="mt-4 space-y-2.5">
           {WOOD_TYPES.map((type) => {
             const active = woodTypes.includes(type);
@@ -213,12 +229,14 @@ export default function Products() {
                 <button
                   type="button"
                   onClick={() => toggle(woodTypes, type, setWoodTypes)}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
-                    }`}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                    active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
+                  }`}
                 >
                   <span
-                    className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${active ? 'border-walnut-800 bg-walnut-800 text-sand-50' : 'border-ink-300'
-                      }`}
+                    className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${
+                      active ? 'border-walnut-800 bg-walnut-800 text-sand-50' : 'border-ink-300'
+                    }`}
                   >
                     {active && <Check className="h-3.5 w-3.5" />}
                   </span>
@@ -231,7 +249,9 @@ export default function Products() {
       </div>
 
       <div>
-        <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900">{t('products.finish')}</h3>
+        <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-walnut-900">
+          {t('products.finish')}
+        </h3>
         <ul className="mt-4 space-y-2.5">
           {FINISHES.map((finish) => {
             const active = finishes.includes(finish);
@@ -240,12 +260,14 @@ export default function Products() {
                 <button
                   type="button"
                   onClick={() => toggle(finishes, finish, setFinishes)}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
-                    }`}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                    active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
+                  }`}
                 >
                   <span
-                    className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${active ? 'border-walnut-800 bg-walnut-800 text-sand-50' : 'border-ink-300'
-                      }`}
+                    className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${
+                      active ? 'border-walnut-800 bg-walnut-800 text-sand-50' : 'border-ink-300'
+                    }`}
                   >
                     {active && <Check className="h-3.5 w-3.5" />}
                   </span>
@@ -332,7 +354,9 @@ export default function Products() {
                     {showPrice && (
                       <p className="mt-4 font-display text-2xl font-700 text-brass-600">
                         ${selectedProduct.pricePerSqm}
-                        <span className="text-sm font-400 text-ink-400 ms-1">{t('products.perSqm')}</span>
+                        <span className="text-sm font-400 text-ink-400 ms-1">
+                          {t('products.perSqm')}
+                        </span>
                       </p>
                     )}
 
@@ -351,20 +375,36 @@ export default function Products() {
                       </h3>
                       <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">{t('products.woodType')}</dt>
-                          <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.woodType}</dd>
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">
+                            {t('products.woodType')}
+                          </dt>
+                          <dd className="mt-1 text-sm font-medium text-ink-800">
+                            {selectedProduct.woodType}
+                          </dd>
                         </div>
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">{t('products.finish')}</dt>
-                          <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.finish}</dd>
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">
+                            {t('products.finish')}
+                          </dt>
+                          <dd className="mt-1 text-sm font-medium text-ink-800">
+                            {selectedProduct.finish}
+                          </dd>
                         </div>
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">{t('products.thickness')}</dt>
-                          <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.thickness}</dd>
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">
+                            {t('products.thickness')}
+                          </dt>
+                          <dd className="mt-1 text-sm font-medium text-ink-800">
+                            {selectedProduct.thickness}
+                          </dd>
                         </div>
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">{t('products.plankSize')}</dt>
-                          <dd className="mt-1 text-sm font-medium text-ink-800">{selectedProduct.plankSize}</dd>
+                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">
+                            {t('products.plankSize')}
+                          </dt>
+                          <dd className="mt-1 text-sm font-medium text-ink-800">
+                            {selectedProduct.plankSize}
+                          </dd>
                         </div>
                       </dl>
                     </div>
@@ -390,7 +430,9 @@ export default function Products() {
                 <div className="sticky top-28">
                   <div className="mb-6 flex items-center gap-2">
                     <SlidersHorizontal className="h-5 w-5 text-walnut-800" />
-                    <h2 className="font-display text-lg font-600 text-walnut-900">{t('products.filters')}</h2>
+                    <h2 className="font-display text-lg font-600 text-walnut-900">
+                      {t('products.filters')}
+                    </h2>
                   </div>
                   <FilterPanel />
                 </div>
@@ -446,18 +488,28 @@ export default function Products() {
                   </div>
                 ) : error ? (
                   <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
-                    <p className="font-display text-lg font-600 text-red-600">{t('products.loadError')}</p>
+                    <p className="font-display text-lg font-600 text-red-600">
+                      {t('products.loadError')}
+                    </p>
                     <p className="mt-2 text-sm text-ink-500">{error}</p>
                   </div>
                 ) : filtered.length > 0 ? (
                   <div className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
                     {filtered.map((p, i) => (
-                      <ProductCard key={p.id} product={p} index={i} showPrice={showPrice} onViewDetails={handleViewDetails} />
+                      <ProductCard
+                        key={p.id}
+                        product={p}
+                        index={i}
+                        showPrice={showPrice}
+                        onViewDetails={handleViewDetails}
+                      />
                     ))}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink-300 py-24 text-center">
-                    <p className="font-display text-xl font-600 text-walnut-900">{t('products.noResults')}</p>
+                    <p className="font-display text-xl font-600 text-walnut-900">
+                      {t('products.noResults')}
+                    </p>
                     <p className="mt-2 text-sm text-ink-500">{t('products.noResultsHint')}</p>
                     <button
                       type="button"
@@ -483,7 +535,9 @@ export default function Products() {
           />
           <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-sand-50 p-6 shadow-lift">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="font-display text-xl font-600 text-walnut-900">{t('products.filters')}</h2>
+              <h2 className="font-display text-xl font-600 text-walnut-900">
+                {t('products.filters')}
+              </h2>
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(false)}

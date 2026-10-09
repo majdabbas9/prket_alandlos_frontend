@@ -1,9 +1,4 @@
-import {
-  Phone,
-  MapPin,
-  Clock,
-  MessageCircle,
-} from 'lucide-react';
+import { Phone, MapPin, Clock, MessageCircle } from 'lucide-react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useInfo, parseOpeningTime } from '@/hooks/useInfo';
 import { useLanguage } from '@/i18n/LanguageContext';
@@ -49,7 +44,11 @@ export default function Contact() {
       icon: MessageCircle,
       title: t('contact.whatsappUs'),
       lines: [info?.whatsappLink || 'wa.me/+972533919190', t('contact.clickToChat')],
-      href: info?.whatsappLink ? (info.whatsappLink.startsWith('http') ? info.whatsappLink : `https://${info.whatsappLink}`) : 'https://wa.me/+972533919190',
+      href: info?.whatsappLink
+        ? info.whatsappLink.startsWith('http')
+          ? info.whatsappLink
+          : `https://${info.whatsappLink}`
+        : 'https://wa.me/+972533919190',
       ltr: true,
     },
     {
@@ -66,7 +65,9 @@ export default function Contact() {
       {/* Header */}
       <section className="bg-ink-950 pt-36 pb-20 text-sand-100 lg:pt-44 lg:pb-28">
         <div className="container-wide">
-          <p className="eyebrow text-brass-300">{info?.contactEyebrow || t('contact.fallbackEyebrow')}</p>
+          <p className="eyebrow text-brass-300">
+            {info?.contactEyebrow || t('contact.fallbackEyebrow')}
+          </p>
           <h1 className="mt-4 max-w-3xl font-display text-5xl font-700 leading-[1.05] text-sand-50 sm:text-6xl">
             {info?.contactTitle || t('contact.fallbackTitle')}
           </h1>
@@ -89,7 +90,9 @@ export default function Contact() {
                   <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-walnut-800/8 text-walnut-800 transition-colors group-hover:bg-walnut-800 group-hover:text-sand-50">
                     <card.icon className="h-6 w-6" />
                   </span>
-                  <h3 className="mt-5 font-display text-xl font-600 text-walnut-900">{card.title}</h3>
+                  <h3 className="mt-5 font-display text-xl font-600 text-walnut-900">
+                    {card.title}
+                  </h3>
                   {card.lines.map((line, lineIndex) => (
                     <p
                       key={line}
@@ -120,18 +123,26 @@ export default function Contact() {
                   <ul className="mt-5 divide-y divide-ink-100">
                     {parsedHours ? (
                       <li className="flex flex-col gap-1 py-3 justify-center">
-                        <span className="text-sm text-ink-600 font-semibold">{parsedHours.days}</span>
-                        <span className="text-sm font-medium text-walnut-900">{parsedHours.time}</span>
+                        <span className="text-sm text-ink-600 font-semibold">
+                          {parsedHours.days}
+                        </span>
+                        <span className="text-sm font-medium text-walnut-900">
+                          {parsedHours.time}
+                        </span>
                       </li>
                     ) : (
                       <>
                         <li className="flex items-center justify-between py-3">
                           <span className="text-sm text-ink-600">Sunday — Thursday</span>
-                          <span className="text-sm font-medium text-walnut-900">9:00 AM — 7:00 PM</span>
+                          <span className="text-sm font-medium text-walnut-900">
+                            9:00 AM — 7:00 PM
+                          </span>
                         </li>
                         <li className="flex items-center justify-between py-3">
                           <span className="text-sm text-ink-600">Friday — Saturday</span>
-                          <span className="text-sm font-medium text-walnut-900">10:00 AM — 9:00 PM</span>
+                          <span className="text-sm font-medium text-walnut-900">
+                            10:00 AM — 9:00 PM
+                          </span>
                         </li>
                       </>
                     )}
@@ -164,8 +175,12 @@ export default function Contact() {
                     <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-walnut-800 text-sand-50 shadow-card">
                       <MapPin className="h-6 w-6" />
                     </span>
-                    <p className="mt-3 text-sm font-medium text-walnut-900 font-display">{t('home.showroomName')}</p>
-                    <p className="mt-1 text-xs text-ink-500">{info?.location || 'kafr kanna, Isreal'}</p>
+                    <p className="mt-3 text-sm font-medium text-walnut-900 font-display">
+                      {t('home.showroomName')}
+                    </p>
+                    <p className="mt-1 text-xs text-ink-500">
+                      {info?.location || 'kafr kanna, Isreal'}
+                    </p>
 
                     <div className="mt-4 flex items-center justify-center gap-2">
                       <a

@@ -30,7 +30,7 @@ export interface StoreInfo {
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
 
 // AM/PM markers across the supported languages (Arabic/Hebrew meridiem terms included)
-const MERIDIEM = "(?:AM|PM|am|pm|صباحًا|مساءً|לפנה״צ|אחה״צ)";
+const MERIDIEM = '(?:AM|PM|am|pm|صباحًا|مساءً|לפנה״צ|אחה״צ)';
 
 export function parseOpeningTime(timeStr: string) {
   // Meridiem markers are optional so 24-hour formats (e.g. Hebrew "10:00 — 18:00") also parse

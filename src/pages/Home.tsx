@@ -60,7 +60,10 @@ export default function Home() {
 
         <div className="container-wide relative z-10 pt-28">
           <div className="max-w-2xl">
-            <p className="eyebrow animate-fade-up text-brass-300" style={{ animationDelay: '0.1s' }}>
+            <p
+              className="eyebrow animate-fade-up text-brass-300"
+              style={{ animationDelay: '0.1s' }}
+            >
               {info?.heroEyebrow || t('home.fallbackHeroEyebrow')}
             </p>
             <h1
@@ -99,7 +102,9 @@ export default function Home() {
               {statsToRender.map((s) => (
                 <div key={s.label}>
                   <p className="font-display text-3xl font-700 text-sand-50">{s.value}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.16em] text-sand-100/70">{s.label}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.16em] text-sand-100/70">
+                    {s.label}
+                  </p>
                 </div>
               ))}
             </div>
@@ -191,7 +196,9 @@ export default function Home() {
             <Reveal>
               <div className="h-full rounded-2xl border border-sand-100/10 bg-sand-100/5 p-7 backdrop-blur-sm transition-colors duration-300 hover:border-brass-400/40 hover:bg-sand-100/10">
                 <MapPin className="h-7 w-7 text-brass-400" />
-                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">{t('home.ourAddress')}</h3>
+                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">
+                  {t('home.ourAddress')}
+                </h3>
                 <p className="mt-3 text-sm leading-relaxed text-sand-100/70">
                   {info?.location || 'kafr kanna, Isreal'}
                 </p>
@@ -200,7 +207,9 @@ export default function Home() {
             <Reveal delay={120}>
               <div className="h-full rounded-2xl border border-sand-100/10 bg-sand-100/5 p-7 backdrop-blur-sm transition-colors duration-300 hover:border-brass-400/40 hover:bg-sand-100/10">
                 <Clock className="h-7 w-7 text-brass-400" />
-                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">{t('home.openingHours')}</h3>
+                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">
+                  {t('home.openingHours')}
+                </h3>
                 <ul className="mt-3 space-y-1.5 text-sm text-sand-100/70">
                   {parsedHours ? (
                     <li>
@@ -219,7 +228,9 @@ export default function Home() {
             <Reveal delay={240}>
               <div className="h-full rounded-2xl border border-sand-100/10 bg-sand-100/5 p-7 backdrop-blur-sm transition-colors duration-300 hover:border-brass-400/40 hover:bg-sand-100/10">
                 <Car className="h-7 w-7 text-brass-400" />
-                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">{t('home.gettingHere')}</h3>
+                <h3 className="mt-5 font-display text-xl font-600 text-sand-50">
+                  {t('home.gettingHere')}
+                </h3>
                 <p className="mt-3 text-sm leading-relaxed text-sand-100/70">
                   {t('home.gettingHereText', {
                     location: info?.location.split(',')[0] || 'kafr kanna',
@@ -245,8 +256,12 @@ export default function Home() {
                   <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brass-400 text-ink-950 shadow-lift">
                     <MapPin className="h-7 w-7" />
                   </span>
-                  <p className="mt-4 font-display text-lg font-600 text-sand-50">{t('home.showroomName')}</p>
-                  <p className="mt-1 text-sm text-sand-100/60">{info?.location || 'kafr kanna, Isreal'}</p>
+                  <p className="mt-4 font-display text-lg font-600 text-sand-50">
+                    {t('home.showroomName')}
+                  </p>
+                  <p className="mt-1 text-sm text-sand-100/60">
+                    {info?.location || 'kafr kanna, Isreal'}
+                  </p>
 
                   <div className="mt-5 flex items-center justify-center gap-3">
                     <a
