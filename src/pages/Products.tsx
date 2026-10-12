@@ -21,8 +21,15 @@ interface ApiProduct {
   description?: string;
   price?: number;
   imageKey?: string;
+  thumbKey?: string;
+  /** Set when the backend has a public R2 domain configured */
+  imageUrl?: string;
+  thumbUrl?: string;
   tag?: string;
 }
+
+const photoUrl = (key?: string) =>
+  key ? `${SERVER_URL}/api/products/photo?key=${encodeURIComponent(key)}` : '';
 
 function ProductCard({
   product,
@@ -45,8 +52,14 @@ function ProductCard({
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
-          src={product.image}
+          src={product.thumbnail || product.image}
           alt={product.name}
+          width={600}
+          height={450}
+          // The first row is visible right away; the rest load as they scroll into view
+          loading={index < 3 ? 'eager' : 'lazy'}
+          fetchPriority={index < 3 ? 'high' : 'auto'}
+          decoding="async"
           className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink-950/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -155,10 +168,6 @@ export default function Products() {
       .then((data) => {
         if (data.success && Array.isArray(data.data)) {
           const mapped: Product[] = data.data.map((p: ApiProduct) => {
-            const img = p.imageKey
-              ? `${SERVER_URL}/api/products/photo?key=${encodeURIComponent(p.imageKey)}`
-              : '';
-            console.log(img);
             return {
               id: p.id,
               name: p.title || 'Untitled Product',
@@ -168,7 +177,8 @@ export default function Products() {
               plankSize: p.plankSize || '190 × 1900 mm',
               description: p.description || '',
               pricePerSqm: p.price || 0,
-              image: img,
+              image: p.imageUrl || photoUrl(p.imageKey),
+              thumbnail: p.thumbUrl || photoUrl(p.thumbKey),
               tag: p.tag || undefined,
             };
           });
@@ -334,6 +344,8 @@ export default function Products() {
                     <img
                       src={selectedProduct.image}
                       alt={selectedProduct.name}
+                      fetchPriority="high"
+                      decoding="async"
                       className="w-full h-auto max-h-[75vh] object-contain rounded-2xl mx-auto shadow-sm"
                     />
                   </div>
