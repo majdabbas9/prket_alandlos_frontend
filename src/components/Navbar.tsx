@@ -5,7 +5,9 @@ import { useLanguage } from '@/i18n/LanguageContext';
 import { LANGS } from '@/i18n/translations';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
-const LOGO_URL = `${SERVER_URL}/api/logo`;
+const IMAGES_URL = (import.meta.env.VITE_IMAGES_URL || '').replace(/\/+$/, '');
+// Straight from the R2 images domain when set, else streamed through the API
+const LOGO_URL = IMAGES_URL ? `${IMAGES_URL}/logo/logoImage` : `${SERVER_URL}/api/logo`;
 
 function LangPills({ variant }: { variant: 'light' | 'dark' }) {
   const { lang, setLang } = useLanguage();
