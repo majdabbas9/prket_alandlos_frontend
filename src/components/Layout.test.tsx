@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { screen, within } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, screen, within } from '@testing-library/react';
 import { STORE_INFO, mockApi, renderApp } from '@/test/utils';
 
 const footer = () => screen.getByRole('contentinfo');
@@ -36,7 +36,48 @@ describe('site navigation', () => {
   });
 });
 
+describe('page changes', () => {
+  it('opens each new page at the top', async () => {
+    mockApi();
+    const { user } = renderApp('/');
+    const scrollTo = vi.mocked(window.scrollTo);
+    scrollTo.mockClear();
+
+    await user.click(within(header()).getAllByRole('link', { name: 'تواصلوا معنا' })[0]);
+
+    expect(window.location.pathname).toBe('/contact');
+    expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ top: 0 }));
+  });
+
+  it('shows a placeholder icon instead of a broken logo when the logo fails to load', () => {
+    mockApi();
+    renderApp('/');
+    const logo = within(header()).getByRole('img', { name: 'شعار بركيه الأندلس' });
+    const placeholder = logo.parentElement!.querySelector<HTMLElement>('.logo-fallback')!;
+
+    fireEvent.error(logo);
+
+    expect(logo).not.toBeVisible();
+    expect(placeholder.style.display).toBe('flex');
+  });
+});
+
 describe('footer', () => {
+  it('still gives working contact details when the backend is down', () => {
+    mockApi({ info: 'error' });
+    renderApp('/');
+
+    expect(within(footer()).getByRole('link', { name: '053-3919190' })).toHaveAttribute(
+      'href',
+      'tel:053-3919190',
+    );
+    expect(within(footer()).getByRole('link', { name: 'إنستغرام' })).toBeInTheDocument();
+    expect(within(footer()).getAllByRole('link', { name: 'المنتجات' })[0]).toHaveAttribute(
+      'href',
+      '/products',
+    );
+  });
+
   it("shows the store's contact details and hours from the backend", async () => {
     mockApi();
     renderApp('/');

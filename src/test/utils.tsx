@@ -99,7 +99,7 @@ type Reply = { status?: number; body: unknown } | 'network-error';
 export interface ApiMockOptions {
   /** Per-language info, or a failure for every /api/info call */
   info?: Partial<Record<Lang, StoreInfo>> | 'error';
-  products?: unknown[] | 'error' | { status: number; body: unknown };
+  products?: unknown[] | 'error' | 'network-error' | { status: number; body: unknown };
   /** Current hero image version, or a failure of the metadata lookup */
   homepageVersion?: string | 'error';
 }
@@ -141,6 +141,7 @@ export function mockApi({
     }
     if (url.pathname === '/api/products') {
       if (products === 'error') return reply({ status: 500, body: { success: false } });
+      if (products === 'network-error') return reply('network-error');
       if (!Array.isArray(products)) return reply(products);
       return reply({ body: { success: true, data: products } });
     }

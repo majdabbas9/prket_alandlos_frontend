@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { apiDown, expect, test } from './fixtures';
 import { catalogue, expectImageLoaded, storeInfo } from './support';
 
 test.describe('home page', () => {
@@ -45,6 +45,22 @@ test.describe('home page', () => {
 
     await expect(page).toHaveURL(/\/contact$/);
     await expect(page.getByRole('main').getByRole('link', { name: /اتصلوا بنا/ })).toBeVisible();
+  });
+});
+
+test.describe('when the backend is down', () => {
+  test('the home page still shows the built-in Arabic copy and works', async ({ page }) => {
+    await apiDown(page);
+    await page.goto('/');
+
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('أناقة خالدة');
+    await page
+      .getByRole('main')
+      .getByRole('link', { name: /استكشفوا المجموعة/ })
+      .click();
+    await expect(page).toHaveURL(/\/products$/);
+    await expect(page.getByText('تعذّر تحميل المنتجات')).toBeVisible();
   });
 });
 

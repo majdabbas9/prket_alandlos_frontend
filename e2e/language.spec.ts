@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { LANG_KEY, storeInfo, visitAs } from './support';
 
 test.describe('site language', () => {
@@ -34,16 +34,39 @@ test.describe('site language', () => {
     await expect(page).toHaveTitle('Prket Alandlos — Timeless Wood Flooring');
     expect(await page.evaluate((k) => localStorage.getItem(k), LANG_KEY)).toBe('en');
 
-    await page.getByRole('banner').getByRole('link', { name: 'Products' }).click();
+    await page.getByRole('banner').getByRole('link', { name: 'Products' }).first().click();
     await expect(page).toHaveURL(/\/products$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      'Flooring that grounds a home',
-    );
+    // The page heading is editable in the admin, so check the built-in UI labels instead
+    await expect(page.getByLabel('Sort by')).toBeVisible();
+    await expect(page.getByLabel('ترتيب حسب')).toHaveCount(0);
 
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-      'Flooring that grounds a home',
+    await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+    await expect(page.getByLabel('Sort by')).toBeVisible();
+    await expect(
+      page.getByRole('banner').getByRole('link', { name: 'Contact Us' }).first(),
+    ).toBeVisible();
+  });
+
+  test('switching language changes the static labels on every part of the page', async ({
+    page,
+  }) => {
+    await page.goto('/contact');
+    const footer = page.getByRole('contentinfo');
+    await expect(footer.getByRole('link', { name: 'إنستغرام' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'English' }).first().click();
+
+    await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+    await expect(
+      page.getByRole('banner').getByRole('link', { name: 'Home' }).first(),
+    ).toBeVisible();
+    await expect(page.getByRole('main').getByRole('link', { name: /Call us/i })).toBeVisible();
+    await expect(footer.getByRole('link', { name: 'Instagram' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'English' }).first()).toHaveAttribute(
+      'aria-pressed',
+      'true',
     );
   });
 

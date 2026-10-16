@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import { mockApi, renderApp } from '@/test/utils';
+import { translations } from './translations';
 
 describe('site language', () => {
   it('opens in Arabic, right-to-left, for a first-time visitor', async () => {
@@ -86,5 +87,23 @@ describe('site language', () => {
     expect(document.documentElement.lang).toBe('he');
     expect(document.documentElement.dir).toBe('rtl');
     expect(await screen.findByRole('heading', { level: 1, name: 'רצפות מהשרת' })).toBeVisible();
+  });
+
+  it('updates the page title and search description with the language', async () => {
+    const meta = document.createElement('meta');
+    meta.name = 'description';
+    document.head.appendChild(meta);
+    try {
+      mockApi();
+      const { user } = renderApp('/');
+      expect(meta.content).toBe(translations.ar['meta.description']);
+
+      await user.click(screen.getAllByRole('button', { name: 'English' })[0]);
+
+      expect(document.title).toBe('Prket Alandlos — Timeless Wood Flooring');
+      expect(meta.content).toBe(translations.en['meta.description']);
+    } finally {
+      meta.remove();
+    }
   });
 });

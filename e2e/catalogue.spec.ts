@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, stubApi } from './fixtures';
+import type { Page } from '@playwright/test';
 import { catalogue, expectImageLoaded, productName, storeInfo, type ApiProduct } from './support';
 
 /** Opens the catalogue and returns what the backend served it */
@@ -19,6 +20,12 @@ test.describe('product catalogue', () => {
   test('shows every product the store has published', async ({ page }) => {
     const { products } = await openCatalogue(page);
 
+    await expect(page.getByText('تعذّر تحميل المنتجات')).toHaveCount(0);
+    if (products.length === 0) {
+      // An empty catalogue gets the empty state, not a blank page
+      await expect(page.getByText('لا توجد أرضيات تطابق هذه الفلاتر')).toBeVisible();
+      return;
+    }
     await expect(cards(page)).toHaveCount(products.length);
     await expect(
       page.getByText(
@@ -29,6 +36,18 @@ test.describe('product catalogue', () => {
       await expect(
         page.getByRole('article', { name: productName(p), exact: true }).first(),
       ).toBeAttached();
+    }
+  });
+
+  test('every product card has a name, a photo and a way to open it', async ({ page }) => {
+    const { products } = await openCatalogue(page);
+    test.skip(products.length === 0, 'catalogue is empty');
+    await expect(cards(page)).toHaveCount(products.length);
+
+    for (const card of await cards(page).all()) {
+      await expect(card.getByRole('heading', { level: 3 })).not.toBeEmpty();
+      await expect(card.locator('img')).toHaveAttribute('src', /\S/);
+      await expect(card.getByRole('button', { name: 'عرض التفاصيل' })).toBeEnabled();
     }
   });
 
@@ -84,6 +103,30 @@ test.describe('product catalogue', () => {
 
     await sort.selectOption('featured');
     expect(await shownNames(page)).toEqual(names(products));
+  });
+});
+
+// The backend's answer is replaced in the browser, so these never depend on (or touch) real data
+test.describe('when the catalogue is unavailable', () => {
+  test('a backend failure shows an error, not an empty or broken page', async ({ page }) => {
+    await stubApi(page, '/api/products', 500, { success: false });
+    await page.goto('/products');
+
+    await expect(page.getByText('تعذّر تحميل المنتجات')).toBeVisible();
+    await expect(cards(page)).toHaveCount(0);
+    // The rest of the site still works
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await page.getByRole('banner').getByRole('link', { name: 'تواصلوا معنا' }).first().click();
+    await expect(page).toHaveURL(/\/contact$/);
+  });
+
+  test('a store with no products shows the empty state', async ({ page }) => {
+    await stubApi(page, '/api/products', 200, { success: true, data: [] });
+    await page.goto('/products');
+
+    await expect(page.getByText('لا توجد أرضيات تطابق هذه الفلاتر')).toBeVisible();
+    await expect(page.getByText('عرض 0 من المنتجات')).toBeVisible();
+    await expect(cards(page)).toHaveCount(0);
   });
 });
 

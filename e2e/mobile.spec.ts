@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { catalogue, storeInfo } from './support';
 
 // Runs in the "mobile" project (phone viewport): most visitors browse on a phone.
@@ -28,6 +28,25 @@ test.describe('on a phone', () => {
 
     await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
     await expect(page.getByRole('banner').getByRole('link', { name: 'Products' })).toBeVisible();
+  });
+
+  test('the filter drawer opens and closes back to the results', async ({ page }) => {
+    const products = catalogue(page);
+    await page.goto('/products');
+    const count = (await products).length;
+
+    await page.getByRole('button', { name: 'الفلاتر' }).click();
+    const showResults = page.getByRole('button', { name: `عرض ${count} نتيجة` });
+    await expect(showResults).toBeVisible();
+    await expect(page.getByRole('button', { name: 'إغلاق الفلاتر' })).toBeVisible();
+
+    await showResults.click();
+    await expect(showResults).toHaveCount(0);
+    await expect(page.getByRole('article')).toHaveCount(count);
+
+    await page.getByRole('button', { name: 'الفلاتر' }).click();
+    await page.getByRole('button', { name: 'إغلاق الفلاتر' }).click();
+    await expect(page.getByRole('button', { name: 'إغلاق الفلاتر' })).toHaveCount(0);
   });
 
   test('a visitor can tap to call the store', async ({ page }) => {

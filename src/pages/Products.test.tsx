@@ -130,6 +130,14 @@ describe('product catalogue', () => {
     expect(screen.queryAllByRole('article')).toHaveLength(0);
   });
 
+  it('tells the visitor when the backend cannot be reached at all', async () => {
+    mockApi({ products: 'network-error' });
+    renderApp('/products');
+
+    expect(await screen.findByText('تعذّر تحميل المنتجات')).toBeVisible();
+    expect(screen.queryAllByRole('article')).toHaveLength(0);
+  });
+
   it('treats a malformed backend reply as a load failure', async () => {
     mockApi({ products: { status: 200, body: { success: false } } });
     renderApp('/products');
@@ -143,6 +151,30 @@ describe('product catalogue', () => {
 
     expect(await screen.findByText('لا توجد أرضيات تطابق هذه الفلاتر')).toBeVisible();
     expect(screen.getByText('عرض 0 من المنتجات')).toBeInTheDocument();
+  });
+});
+
+describe('filters', () => {
+  it('opens the filter drawer, counts chosen filters and clears them', async () => {
+    mockApi();
+    const { user } = renderApp('/products');
+    await screen.findAllByRole('article');
+
+    await user.click(screen.getByRole('button', { name: 'الفلاتر' }));
+    const showResults = screen.getByRole('button', { name: 'عرض 3 نتيجة' });
+    const drawer = showResults.parentElement!;
+
+    await user.click(within(drawer).getByRole('button', { name: 'Oak' }));
+    await user.click(within(drawer).getByRole('button', { name: 'Matt' }));
+    // The badge on the filters button counts the active filters
+    expect(screen.getByRole('button', { name: /الفلاتر\s*2/ })).toBeInTheDocument();
+
+    await user.click(within(drawer).getByRole('button', { name: 'مسح جميع الفلاتر' }));
+    expect(within(drawer).queryByRole('button', { name: 'مسح جميع الفلاتر' })).toBeNull();
+
+    await user.click(showResults);
+    expect(screen.queryByRole('button', { name: 'إغلاق الفلاتر' })).toBeNull();
+    expect(screen.getAllByRole('article')).toHaveLength(3);
   });
 });
 

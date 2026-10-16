@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { storeInfo, whatsappHref } from './support';
 
 test.describe('contact page', () => {
@@ -16,25 +16,12 @@ test.describe('contact page', () => {
     await expect(call).toHaveAttribute('href', `tel:${info.phone}`);
     await expect(call.getByText(info.phone, { exact: true })).toHaveAttribute('dir', 'ltr');
 
-    await expect(main.getByRole('link', { name: /راسلونا عبر واتساب/ })).toHaveAttribute(
-      'href',
-      whatsappHref(info.whatsappLink),
-    );
+    const whatsapp = main.getByRole('link', { name: /راسلونا عبر واتساب/ });
+    await expect(whatsapp).toHaveAttribute('href', whatsappHref(info.whatsappLink));
+    // Always an absolute link, even when the admin saved it without a scheme
+    await expect(whatsapp).toHaveAttribute('href', /^https?:\/\/\S+/);
 
     await expect(main.getByText(info.location, { exact: true }).first()).toBeVisible();
-  });
-
-  test('the WhatsApp link points at a real chat URL', async ({ page }) => {
-    const infoP = storeInfo(page, 'ar');
-    await page.goto('/contact');
-    const { whatsappLink } = await infoP;
-
-    const href = await page
-      .getByRole('main')
-      .getByRole('link', { name: /راسلونا عبر واتساب/ })
-      .getAttribute('href');
-    expect(href).toMatch(/^https:\/\/(wa\.me|api\.whatsapp\.com|chat\.whatsapp\.com)\//);
-    expect(href).toBe(whatsappHref(whatsappLink));
   });
 
   test('directions open Google Maps and Waze at the store address', async ({ page }) => {

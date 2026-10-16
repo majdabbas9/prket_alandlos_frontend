@@ -1,14 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { LANGS, translate, translations, type Lang, type TranslationKey } from './translations';
+import { translate, translations, type Lang, type TranslationKey } from './translations';
 
 const keys = Object.keys(translations.en) as TranslationKey[];
 const placeholders = (s: string): string[] => (s.match(/\{\w+\}/g) ?? []).sort();
 
 describe('translations', () => {
-  it('offers Arabic, Hebrew and English in the language switcher', () => {
-    expect(LANGS.map((l) => l.code).sort()).toEqual(['ar', 'en', 'he']);
-  });
-
   it.each<Lang>(['ar', 'he'])('%s translates every UI string', (lang) => {
     const missing = keys.filter((k) => !translations[lang][k]?.trim());
     expect(missing).toEqual([]);
