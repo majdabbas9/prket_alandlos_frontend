@@ -1,27 +1,104 @@
-name: CD
+name: CI/CD
 
-# On every push to main (and by hand): build the site and publish it to Cloudflare Pages,
-# once per environment. VITE_* URLs are baked in at build time, so each environment's build
-# points at that environment's API. (Tests come later.)
-# Names and hostnames come from prket_alandlos_infra's scripts/env-config.mjs.
+# Pull requests: ci only. Push to main (and by hand), in order - each job only runs if the one
+# before passed:
+#   ci      - lint, format check, typecheck, unit tests (Vitest), production build
+#   ghcr    - the nginx image (Dockerfile) to GHCR, tagged latest + sha-<short sha>
+#             (used by prket_alandlos_infra's compose stacks)
+#   deploy  - build the site per environment and publish it to Cloudflare Pages
+#   e2e     - Playwright end-to-end tests (e2e-tests.yml) against the site that was just
+#             published and its live backend
+# VITE_* URLs are baked in at build time, so each environment's build points at that
+# environment's API. Names and hostnames come from prket_alandlos_infra's scripts/env-config.mjs.
 # dev and prod are separate Cloudflare accounts; only dev is wired up so far (matrix.include).
 #   vars:    DEV_/PROD_ CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_DATABASE_ID, URL
 #   secrets: DEV_/PROD_ CLOUDFLARE_API_TOKEN (Cloudflare Pages: Edit, Zone > DNS: Edit)
 on:
   push:
     branches: ['main', 'master']
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  # A new push to a PR cancels its previous run; runs on main always finish
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - run: npm run lint
+
+      - run: npm run format:check
+
+      - run: npm run typecheck
+
+      - run: npm test
+
+      - run: npm run build
+
+  ghcr:
+    needs: ci
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUBTOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          build-args: |
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL || 'http://localhost:8080' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
   deploy:
+    needs: ci
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        # PROD joins once its PROD_* variables and secrets are set
+        # PROD joins once its PROD_* variables and secrets are set (and gets its own e2e call)
         include:
           - prefix: DEV
             env: dev
@@ -65,10 +142,12 @@ jobs:
         env:
           VARS_JSON: ${{ toJSON(vars) }}
 
+      # version.txt lets the e2e job wait until this exact build is the one being served
       - name: Build
         run: |
           npm ci --no-audit --no-fund
           npm run build
+          echo "$GITHUB_SHA" > dist/version.txt
 
       - name: Create Pages project if missing
         run: |
@@ -139,3 +218,11 @@ jobs:
           fi
           echo "CNAME $DOMAIN -> $target"
           echo "$PROJECT -> https://$DOMAIN" >> "$GITHUB_STEP_SUMMARY"
+
+  e2e:
+    needs: deploy
+    uses: ./.github/workflows/e2e-tests.yml
+    with:
+      environment: dev
+      version: ${{ github.sha }}
+    secrets: inherit

@@ -133,15 +133,15 @@ export default function Contact() {
                     ) : (
                       <>
                         <li className="flex items-center justify-between py-3">
-                          <span className="text-sm text-ink-600">Sunday — Thursday</span>
+                          <span className="text-sm text-ink-600">{t('footer.hoursSunThu')}</span>
                           <span className="text-sm font-medium text-walnut-900">
-                            9:00 AM — 7:00 PM
+                            {t('footer.hoursSunThuTime')}
                           </span>
                         </li>
                         <li className="flex items-center justify-between py-3">
-                          <span className="text-sm text-ink-600">Friday — Saturday</span>
+                          <span className="text-sm text-ink-600">{t('footer.hoursFriSat')}</span>
                           <span className="text-sm font-medium text-walnut-900">
-                            10:00 AM — 9:00 PM
+                            {t('footer.hoursFriSatTime')}
                           </span>
                         </li>
                       </>

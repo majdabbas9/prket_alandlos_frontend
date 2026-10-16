@@ -1,0 +1,113 @@
+name: E2E Tests
+
+# Playwright (e2e/) against the deployed site - the custom domain from <ENV>_URL, else
+# <project>.pages.dev - and the live backend it was built against.
+# Called by ci-cd.yml right after its deploy, or run by hand.
+#   vars:    DEV_/PROD_ CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_DATABASE_ID, URL (to resolve the URLs
+#            with prket_alandlos_infra's scripts/env-config.mjs)
+#   secrets: DEV_/PROD_ CLOUDFLARE_API_TOKEN
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'dev or prod'
+        type: string
+        default: 'dev'
+      version:
+        description: 'Commit the site must be serving (dist/version.txt) before the tests start'
+        type: string
+        default: ''
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to test'
+        type: choice
+        options: ['dev', 'prod']
+        default: 'dev'
+
+concurrency:
+  group: e2e-tests-${{ inputs.environment || 'dev' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      ENV_NAME: ${{ inputs.environment || 'dev' }}
+      PREFIX: ${{ (inputs.environment || 'dev') == 'prod' && 'PROD' || 'DEV' }}
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout prket_alandlos_infra scripts
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/prket_alandlos_infra
+          ref: master
+          path: .infra
+          sparse-checkout: scripts
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Resolve site and API URLs
+        run: |
+          node .infra/scripts/env-config.mjs > "$RUNNER_TEMP/config"
+          get() { sed -n "s/^$1=//p" "$RUNNER_TEMP/config"; }
+          site=$(get site)
+          {
+            echo "BASE_URL=https://${site:-$(get site_project).pages.dev}"
+            echo "API_URL=$(get api_url)"
+          } >> "$GITHUB_ENV"
+        env:
+          VARS_JSON: ${{ toJSON(vars) }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets[format('{0}_CLOUDFLARE_API_TOKEN', env.PREFIX)] }}
+
+      # Pages publishes within seconds, but a new custom domain can take minutes to get its
+      # certificate. With a version, wait until the site serves exactly that build.
+      - name: Wait for the site
+        run: |
+          for _ in $(seq 1 60); do
+            served=$(curl -sf --max-time 10 "$BASE_URL/version.txt?nocache=$RANDOM" || true)
+            if [ -z "$VERSION" ] && [ -n "$served" ]; then echo "$BASE_URL is up"; exit 0; fi
+            if [ -n "$VERSION" ] && [ "$served" = "$VERSION" ]; then echo "$BASE_URL serves $VERSION"; exit 0; fi
+            sleep 5
+          done
+          echo "$BASE_URL did not serve ${VERSION:-anything} within 5 min (last: ${served:0:80})"; exit 1
+
+      # The backend container may be cold or still rolling out; the site is useless without it
+      - name: Wait for the API
+        run: |
+          for _ in $(seq 1 60); do
+            if curl -sf --max-time 10 -o /dev/null "$API_URL/api/info?lang=ar"; then
+              echo "API is up at $API_URL"; exit 0
+            fi
+            sleep 5
+          done
+          echo "API at $API_URL/api/info not available after 5 min"; exit 1
+
+      - run: npm ci --no-audit --no-fund
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Run e2e tests
+        run: |
+          echo "Testing $BASE_URL (API $API_URL)"
+          npx playwright test
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ env.ENV_NAME }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+          if-no-files-found: ignore

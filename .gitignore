@@ -22,3 +22,8 @@ dist-ssr
 *.sw?
 .env
 CLAUDE.md
+# Test output
+coverage
+test-results
+playwright-report
+blob-report

@@ -43,10 +43,11 @@ function ProductCard({
   onViewDetails: (product: Product) => void;
 }) {
   const { t } = useLanguage();
-  const { ref, visible } = useScrollReveal<HTMLDivElement>();
+  const { ref, visible } = useScrollReveal<HTMLElement>();
   return (
-    <div
+    <article
       ref={ref}
+      aria-label={product.name}
       className={`reveal ${visible ? 'is-visible' : ''} group flex flex-col overflow-hidden rounded-2xl border border-ink-200/70 bg-white shadow-soft transition-all duration-500 hover:-translate-y-1 hover:shadow-lift`}
       style={{ transitionDelay: `${(index % 3) * 90}ms` }}
     >
@@ -128,7 +129,7 @@ function ProductCard({
           <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1 rtl:rotate-180 rtl:group-hover/btn:-translate-x-1" />
         </button>
       </div>
-    </div>
+    </article>
   );
 }
 

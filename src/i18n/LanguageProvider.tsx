@@ -3,19 +3,17 @@ import { translate, type Lang, type TranslationKey } from './translations';
 import { LanguageContext, type LanguageContextValue } from './LanguageContext';
 
 const STORAGE_KEY = 'prket-alandlos-lang';
+const DEFAULT_LANG: Lang = 'ar';
 
-/** Saved user choice first, then browser language, then English. */
+/** Saved user choice first, else Arabic (the site's default language). */
 function detectInitialLang(): Lang {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved === 'en' || saved === 'ar' || saved === 'he') return saved;
-    const browser = (navigator.language || '').toLowerCase();
-    if (browser.startsWith('ar')) return 'ar';
-    if (browser.startsWith('he')) return 'he';
   } catch {
-    // localStorage unavailable — fall through to English
+    // localStorage unavailable — fall through to the default
   }
-  return 'en';
+  return DEFAULT_LANG;
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
