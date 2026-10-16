@@ -67,7 +67,10 @@ test.describe('contact page', () => {
       'href',
       `tel:${info.phone}`,
     );
-    await expect(footer.getByText(info.location, { exact: true })).toBeVisible();
+    // The address in the contact list; the store description above it may be the same text
+    await expect(
+      footer.getByRole('listitem').getByText(info.location, { exact: true }),
+    ).toBeVisible();
     await expect(footer.getByRole('link', { name: 'إنستغرام' })).toHaveAttribute(
       'href',
       'https://www.instagram.com/prket_alandlos/',
