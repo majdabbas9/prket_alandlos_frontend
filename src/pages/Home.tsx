@@ -2,14 +2,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin, Clock, Car } from 'lucide-react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useInfo, parseOpeningTime } from '@/hooks/useInfo';
+import { useHomepageImage } from '@/hooks/useHomepageImage';
 import { useLanguage } from '@/i18n/LanguageContext';
-
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
-const IMAGES_URL = (import.meta.env.VITE_IMAGES_URL || '').replace(/\/+$/, '');
-// Straight from the R2 images domain when set, else streamed through the API
-const HERO_IMG = IMAGES_URL
-  ? `${IMAGES_URL}/homePage/homepageImage`
-  : `${SERVER_URL}/api/homepage-image`;
 
 const DEFAULT_STATS = [
   { value: '30+', labelKey: 'home.statsYears' as const },
@@ -42,6 +36,7 @@ function Reveal({
 export default function Home() {
   const { t } = useLanguage();
   const { info } = useInfo();
+  const heroImg = useHomepageImage();
   const parsedHours = info ? parseOpeningTime(info.storeOpeningTime) : null;
   const statsToRender =
     info?.stats && info.stats.length > 0
@@ -52,12 +47,14 @@ export default function Home() {
     <>
       {/* Hero */}
       <section className="relative flex min-h-[100svh] items-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src={HERO_IMG}
-            alt={t('home.heroImgAlt')}
-            className="h-full w-full object-cover animate-slow-zoom"
-          />
+        <div className="absolute inset-0 bg-ink-950">
+          {heroImg && (
+            <img
+              src={heroImg}
+              alt={t('home.heroImgAlt')}
+              className="h-full w-full object-cover animate-slow-zoom"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-ink-950/85 via-ink-950/55 to-ink-950/20 rtl:bg-gradient-to-l" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent" />
         </div>
