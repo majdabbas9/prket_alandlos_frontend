@@ -307,12 +307,14 @@ export default function Products() {
       {/* Page header */}
       <section className="bg-ink-950 pt-36 pb-20 text-sand-100 lg:pt-44 lg:pb-28">
         <div className="container-wide">
-          <p className="eyebrow text-brass-300">{t('products.pageEyebrow')}</p>
+          <p className="eyebrow text-brass-300">
+            {info?.productsEyebrow || t('products.pageEyebrow')}
+          </p>
           <h1 className="mt-4 max-w-3xl font-display text-5xl font-700 leading-[1.05] text-sand-50 sm:text-6xl">
-            {t('products.pageTitle')}
+            {info?.productsTitle || t('products.pageTitle')}
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-sand-100/70">
-            {t('products.pageDescription')}
+            {info?.productsDescription || t('products.pageDescription')}
           </p>
         </div>
       </section>

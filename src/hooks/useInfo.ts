@@ -25,6 +25,9 @@ export interface StoreInfo {
   heroEyebrow?: string;
   heroTitle?: string;
   heroDescription?: string;
+  productsEyebrow?: string;
+  productsTitle?: string;
+  productsDescription?: string;
 }
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:8080';
