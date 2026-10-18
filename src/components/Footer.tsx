@@ -16,6 +16,7 @@ export default function Footer() {
     { label: t('nav.home'), to: '/' },
     { label: t('nav.products'), to: '/products' },
     { label: t('nav.contact'), to: '/contact' },
+    { label: t('footer.accessibility'), to: '/accessibility' },
   ];
 
   const hoursFallback = [

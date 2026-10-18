@@ -3,6 +3,7 @@ import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import Products from '@/pages/Products';
 import Contact from '@/pages/Contact';
+import Accessibility from '@/pages/Accessibility';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/accessibility" element={<Accessibility />} />
           <Route path="*" element={<Home />} />
         </Route>
       </Routes>

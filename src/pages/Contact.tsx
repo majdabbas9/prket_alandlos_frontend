@@ -195,7 +195,7 @@ export default function Contact() {
                         href={`https://waze.com/ul?q=${encodeURIComponent(info?.location || 'Alandlos Parquet Kafr Kanna')}&navigate=yes`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full bg-sky-500 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-sky-400 hover:scale-105 active:scale-95 shadow-sm"
+                        className="inline-flex items-center gap-1 rounded-full bg-sky-700 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white transition-all duration-300 hover:bg-sky-800 hover:scale-105 active:scale-95 shadow-sm"
                       >
                         {t('home.waze')}
                       </a>

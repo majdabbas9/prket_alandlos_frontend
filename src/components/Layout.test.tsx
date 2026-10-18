@@ -36,6 +36,19 @@ describe('site navigation', () => {
   });
 });
 
+describe('keyboard access', () => {
+  it('lets keyboard users skip straight to the page content', async () => {
+    mockApi();
+    const { user } = renderApp('/');
+
+    await user.tab();
+    const skip = screen.getByRole('link', { name: 'تخطَّ إلى المحتوى الرئيسي' });
+    expect(skip).toHaveFocus();
+    expect(skip).toHaveAttribute('href', '#main');
+    expect(screen.getByRole('main')).toHaveAttribute('id', 'main');
+  });
+});
+
 describe('page changes', () => {
   it('opens each new page at the top', async () => {
     mockApi();

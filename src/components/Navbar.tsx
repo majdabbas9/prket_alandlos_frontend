@@ -27,6 +27,7 @@ function LangPills({ variant }: { variant: 'light' | 'dark' }) {
           onClick={() => setLang(l.code)}
           aria-label={l.label}
           aria-pressed={lang === l.code}
+          lang={l.code}
           className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors duration-300 ${
             lang === l.code ? active : inactive
           }`}
@@ -133,6 +134,7 @@ export default function Navbar() {
           onClick={() => setOpen((v) => !v)}
           aria-label={t('nav.toggleMenu')}
           aria-expanded={open}
+          aria-controls="mobile-menu"
           className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-300 md:hidden ${
             scrolled ? 'text-walnut-900 hover:bg-walnut-800/10' : 'text-sand-50 hover:bg-white/10'
           }`}
@@ -141,10 +143,11 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer — `invisible` when closed keeps its links out of the tab order */}
       <div
+        id="mobile-menu"
         className={`md:hidden overflow-hidden bg-sand-50 transition-all duration-400 ease-out ${
-          open ? 'max-h-[28rem] border-t border-ink-200/60 shadow-card' : 'max-h-0'
+          open ? 'max-h-[28rem] border-t border-ink-200/60 shadow-card' : 'invisible max-h-0'
         }`}
       >
         <ul className="container-wide flex flex-col gap-1 py-5">

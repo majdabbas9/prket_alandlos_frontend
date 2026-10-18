@@ -11,6 +11,17 @@
   body {
     @apply bg-sand-50 text-ink-900 font-sans antialiased;
   }
+  /* Two-tone keyboard focus ring (dark inside, light outside) so it shows on light and dark sections */
+  :focus-visible {
+    outline: 2px solid theme('colors.brass.300');
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px theme('colors.walnut.900');
+  }
+  /* Programmatic focus targets (e.g. <main> after "skip to content") need no ring */
+  [tabindex='-1']:focus {
+    outline: none;
+    box-shadow: none;
+  }
 }
 
 @layer components {
@@ -18,13 +29,13 @@
     @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-walnut-800 px-7 py-3.5 text-sm font-medium tracking-wide text-sand-50 transition-all duration-300 hover:bg-walnut-700 hover:shadow-lift focus:outline-none focus-visible:ring-2 focus-visible:ring-brass-400 focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-walnut-800 px-7 py-3.5 text-sm font-medium tracking-wide text-sand-50 transition-all duration-300 hover:bg-walnut-700 hover:shadow-lift;
   }
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-walnut-800/30 bg-transparent px-7 py-3.5 text-sm font-medium tracking-wide text-walnut-800 transition-all duration-300 hover:border-walnut-800 hover:bg-walnut-800 hover:text-sand-50;
   }
   .eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.22em] text-brass-600;
+    @apply text-xs font-semibold uppercase tracking-[0.22em] text-brass-700;
   }
   .field-input {
     @apply w-full rounded-xl border border-ink-200 bg-white px-4 py-3 text-sm text-ink-900 placeholder-ink-400 transition-colors duration-200 focus:border-walnut-500 focus:outline-none focus:ring-2 focus:ring-walnut-500/20;
@@ -42,6 +53,24 @@
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Visitors who ask their device to reduce motion get the content without animations */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Language-specific fonts — Inter and Playfair Display have no Arabic/Hebrew glyphs */

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { SlidersHorizontal, ArrowUpDown, X, ArrowRight, Check, ArrowLeft } from 'lucide-react';
 import { WOOD_TYPES, FINISHES, type WoodType, type Finish, type Product } from '@/data/products';
@@ -77,9 +77,9 @@ function ProductCard({
             {product.name}
           </h3>
           {showPrice && (
-            <p className="shrink-0 font-display text-lg font-700 text-brass-600">
+            <p className="shrink-0 font-display text-lg font-700 text-brass-700">
               ${product.pricePerSqm}
-              <span className="block text-end text-xs font-400 text-ink-400">
+              <span className="block text-end text-xs font-400 text-ink-500">
                 {t('products.perSqm')}
               </span>
             </p>
@@ -92,19 +92,19 @@ function ProductCard({
 
         <dl className="mt-5 grid grid-cols-3 gap-2 border-t border-ink-200/60 pt-5">
           <div>
-            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">
+            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-500">
               {t('products.thickness')}
             </dt>
             <dd className="mt-1 text-sm font-medium text-ink-800">{product.thickness}</dd>
           </div>
           <div>
-            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">
+            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-500">
               {t('products.plankSize')}
             </dt>
             <dd className="mt-1 text-sm font-medium text-ink-800">{product.plankSize}</dd>
           </div>
           <div>
-            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-400">
+            <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-ink-500">
               {t('products.finish')}
             </dt>
             <dd className="mt-1 text-sm font-medium text-ink-800">{product.finish}</dd>
@@ -143,6 +143,7 @@ export default function Products() {
   const [finishes, setFinishes] = useState<Finish[]>([]);
   const [sort, setSort] = useState<SortKey>('featured');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const detailHeadingRef = useRef<HTMLHeadingElement>(null);
   const { info } = useInfo();
   const showPrice = info?.showPrice ?? true;
 
@@ -197,6 +198,11 @@ export default function Products() {
       });
   }, []);
 
+  // The detail view replaces the grid, so move screen reader and keyboard focus to it
+  useEffect(() => {
+    if (selectedProduct) detailHeadingRef.current?.focus();
+  }, [selectedProduct]);
+
   const toggle = <T,>(arr: T[], val: T, setter: (v: T[]) => void) => {
     setter(arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]);
   };
@@ -240,6 +246,7 @@ export default function Products() {
                 <button
                   type="button"
                   onClick={() => toggle(woodTypes, type, setWoodTypes)}
+                  aria-pressed={active}
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                     active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
                   }`}
@@ -271,6 +278,7 @@ export default function Products() {
                 <button
                   type="button"
                   onClick={() => toggle(finishes, finish, setFinishes)}
+                  aria-pressed={active}
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                     active ? 'bg-walnut-800/8 text-walnut-900' : 'text-ink-600 hover:bg-ink-100/60'
                   }`}
@@ -335,7 +343,9 @@ export default function Products() {
                   <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
                   {t('products.backToCollection')}
                 </button>
-                <span className="text-ink-300">/</span>
+                <span aria-hidden="true" className="text-ink-300">
+                  /
+                </span>
                 <span className="text-sm font-medium text-ink-600">{selectedProduct.name}</span>
               </div>
 
@@ -362,14 +372,18 @@ export default function Products() {
                         {selectedProduct.tag}
                       </span>
                     )}
-                    <h2 className="font-display text-4xl font-700 text-walnut-900 leading-tight">
+                    <h2
+                      ref={detailHeadingRef}
+                      tabIndex={-1}
+                      className="font-display text-4xl font-700 text-walnut-900 leading-tight"
+                    >
                       {selectedProduct.name}
                     </h2>
 
                     {showPrice && (
                       <p className="mt-4 font-display text-2xl font-700 text-brass-600">
                         ${selectedProduct.pricePerSqm}
-                        <span className="text-sm font-400 text-ink-400 ms-1">
+                        <span className="text-sm font-400 text-ink-500 ms-1">
                           {t('products.perSqm')}
                         </span>
                       </p>
@@ -390,7 +404,7 @@ export default function Products() {
                       </h3>
                       <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">
+                          <dt className="text-xs uppercase tracking-wider text-ink-500 font-semibold">
                             {t('products.woodType')}
                           </dt>
                           <dd className="mt-1 text-sm font-medium text-ink-800">
@@ -398,7 +412,7 @@ export default function Products() {
                           </dd>
                         </div>
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">
+                          <dt className="text-xs uppercase tracking-wider text-ink-500 font-semibold">
                             {t('products.finish')}
                           </dt>
                           <dd className="mt-1 text-sm font-medium text-ink-800">
@@ -406,7 +420,7 @@ export default function Products() {
                           </dd>
                         </div>
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">
+                          <dt className="text-xs uppercase tracking-wider text-ink-500 font-semibold">
                             {t('products.thickness')}
                           </dt>
                           <dd className="mt-1 text-sm font-medium text-ink-800">
@@ -414,7 +428,7 @@ export default function Products() {
                           </dd>
                         </div>
                         <div className="border-b border-ink-100 pb-2">
-                          <dt className="text-xs uppercase tracking-wider text-ink-400 font-semibold">
+                          <dt className="text-xs uppercase tracking-wider text-ink-500 font-semibold">
                             {t('products.plankSize')}
                           </dt>
                           <dd className="mt-1 text-sm font-medium text-ink-800">
@@ -470,7 +484,7 @@ export default function Products() {
                         </span>
                       )}
                     </button>
-                    <p className="text-sm text-ink-500">
+                    <p aria-live="polite" className="text-sm text-ink-500">
                       {filtered.length === 1
                         ? t('products.showingOne', { count: filtered.length })
                         : t('products.showingMany', { count: filtered.length })}
@@ -486,7 +500,7 @@ export default function Products() {
                       id="sort"
                       value={sort}
                       onChange={(e) => setSort(e.target.value as SortKey)}
-                      className="rounded-full border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-700 transition-colors focus:border-walnut-500 focus:outline-none focus:ring-2 focus:ring-walnut-500/20"
+                      className="rounded-full border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-700 transition-colors"
                     >
                       {sortOptions.map((o) => (
                         <option key={o.value} value={o.value}>
@@ -498,8 +512,9 @@ export default function Products() {
                 </div>
 
                 {loading ? (
-                  <div className="flex min-h-[300px] items-center justify-center">
+                  <div role="status" className="flex min-h-[300px] items-center justify-center">
                     <div className="h-8 w-8 animate-spin rounded-full border-4 border-walnut-800 border-t-transparent"></div>
+                    <span className="sr-only">{t('products.loading')}</span>
                   </div>
                 ) : error ? (
                   <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
@@ -548,15 +563,25 @@ export default function Products() {
             className="absolute inset-0 bg-ink-950/50 backdrop-blur-sm animate-fade-in"
             onClick={() => setMobileFiltersOpen(false)}
           />
-          <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-sand-50 p-6 shadow-lift">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mobile-filters-title"
+            onKeyDown={(e) => e.key === 'Escape' && setMobileFiltersOpen(false)}
+            className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-sand-50 p-6 shadow-lift"
+          >
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="font-display text-xl font-600 text-walnut-900">
+              <h2
+                id="mobile-filters-title"
+                className="font-display text-xl font-600 text-walnut-900"
+              >
                 {t('products.filters')}
               </h2>
               <button
                 type="button"
                 onClick={() => setMobileFiltersOpen(false)}
                 aria-label={t('products.closeFilters')}
+                autoFocus
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-ink-100 text-ink-700 hover:bg-ink-200"
               >
                 <X className="h-5 w-5" />

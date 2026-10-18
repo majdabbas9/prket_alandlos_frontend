@@ -176,6 +176,20 @@ describe('filters', () => {
     expect(screen.queryByRole('button', { name: 'إغلاق الفلاتر' })).toBeNull();
     expect(screen.getAllByRole('article')).toHaveLength(3);
   });
+
+  it('opens the filter drawer as a dialog that Escape closes', async () => {
+    mockApi();
+    const { user } = renderApp('/products');
+    await screen.findAllByRole('article');
+
+    await user.click(screen.getByRole('button', { name: 'الفلاتر' }));
+    expect(screen.getByRole('dialog', { name: 'الفلاتر' })).toBeVisible();
+    // Keyboard focus moves into the dialog
+    expect(screen.getByRole('button', { name: 'إغلاق الفلاتر' })).toHaveFocus();
+
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
 });
 
 describe('product details and inquiry', () => {
@@ -186,7 +200,10 @@ describe('product details and inquiry', () => {
     const walnut = await screen.findByRole('article', { name: 'Chevron Walnut' });
     await user.click(within(walnut).getByRole('button', { name: 'عرض التفاصيل' }));
 
-    expect(screen.getByRole('heading', { level: 2, name: 'Chevron Walnut' })).toBeVisible();
+    const heading = screen.getByRole('heading', { level: 2, name: 'Chevron Walnut' });
+    expect(heading).toBeVisible();
+    // Screen reader and keyboard users land on the product they opened
+    expect(heading).toHaveFocus();
     expect(screen.getByText('Walnut laid in a sharp chevron.')).toBeVisible();
     expect(screen.getByText('$142')).toBeVisible();
     expect(screen.getByText('Chevron')).toBeVisible(); // wood type

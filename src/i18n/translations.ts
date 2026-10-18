@@ -19,6 +19,7 @@ const en = {
   'nav.explore': 'Explore Collection',
   'nav.toggleMenu': 'Toggle menu',
   'nav.logoAlt': 'Prket Alandlos Logo',
+  'nav.skipToContent': 'Skip to main content',
 
   // Footer
   'footer.quickLinks': 'Quick Links',
@@ -34,6 +35,7 @@ const en = {
   'footer.tagline': 'Crafted with care for floors that tell a story.',
   'footer.instagram': 'Instagram',
   'footer.whatsapp': 'WhatsApp',
+  'footer.accessibility': 'Accessibility Statement',
 
   // Home
   'home.heroImgAlt': 'Premium parquet flooring in a sunlit living room',
@@ -91,6 +93,7 @@ const en = {
   'products.showResults': 'Show {count} results',
   'products.perSqm': '/ m²',
   'products.closeFilters': 'Close filters',
+  'products.loading': 'Loading products',
 
   // Contact
   'contact.callUs': 'Call Us',
@@ -104,6 +107,33 @@ const en = {
   'contact.fallbackTitle': "Let's talk about your floor",
   'contact.fallbackDescription':
     "Whether you're planning a renovation or just exploring finishes, our specialists are here to help. Reach out and we'll find the right wood for your space.",
+
+  // Accessibility statement
+  'a11y.eyebrow': 'Accessibility',
+  'a11y.title': 'Accessibility Statement',
+  'a11y.intro':
+    'Prket Alandlos wants every visitor, including people with disabilities, to be able to use this website easily and independently.',
+  'a11y.standardTitle': 'Accessibility level',
+  'a11y.standardText':
+    'We have worked to make this site conform to Israeli Standard 5568, which is based on WCAG 2.0 level AA, as required by the Equal Rights for Persons with Disabilities (Service Accessibility Adjustments) Regulations, 2013.',
+  'a11y.featuresTitle': 'What we did',
+  'a11y.feature1':
+    'Full keyboard navigation, with a clearly visible focus indicator and a "skip to main content" link.',
+  'a11y.feature2':
+    'Screen reader support: semantic page structure, headings and text alternatives for images.',
+  'a11y.feature3': 'Sufficient contrast between text and background colors.',
+  'a11y.feature4': 'Animations are turned off for visitors whose device is set to reduce motion.',
+  'a11y.feature5':
+    'The site is available in Arabic, Hebrew and English, with full right-to-left support.',
+  'a11y.limitationsTitle': 'Known limitations',
+  'a11y.limitationsText':
+    'Product names and descriptions are currently shown in the language they were entered in. If you find a part of the site that is not accessible, please let us know.',
+  'a11y.contactTitle': 'Contact us about accessibility',
+  'a11y.contactText':
+    'If you run into an accessibility problem or need information in another format, contact us and we will do our best to help:',
+  'a11y.phone': 'Phone',
+  'a11y.email': 'Email',
+  'a11y.updated': 'This statement was last updated on {date}.',
 } as const;
 
 export type TranslationKey = keyof typeof en;
@@ -121,6 +151,7 @@ const ar: Record<TranslationKey, string> = {
   'nav.explore': 'استكشفوا المجموعة',
   'nav.toggleMenu': 'فتح/إغلاق القائمة',
   'nav.logoAlt': 'شعار بركيه الأندلس',
+  'nav.skipToContent': 'تخطَّ إلى المحتوى الرئيسي',
 
   // Footer
   'footer.quickLinks': 'روابط سريعة',
@@ -136,6 +167,7 @@ const ar: Record<TranslationKey, string> = {
   'footer.tagline': 'صُنعت بعناية لأرضيات تروي حكاية.',
   'footer.instagram': 'إنستغرام',
   'footer.whatsapp': 'واتساب',
+  'footer.accessibility': 'بيان إتاحة الوصول',
 
   // Home
   'home.heroImgAlt': 'أرضيات باركيه فاخرة في غرفة معيشة مضاءة بأشعة الشمس',
@@ -193,6 +225,7 @@ const ar: Record<TranslationKey, string> = {
   'products.showResults': 'عرض {count} نتيجة',
   'products.perSqm': '/ م²',
   'products.closeFilters': 'إغلاق الفلاتر',
+  'products.loading': 'جارٍ تحميل المنتجات',
 
   // Contact
   'contact.callUs': 'اتصلوا بنا',
@@ -206,6 +239,32 @@ const ar: Record<TranslationKey, string> = {
   'contact.fallbackTitle': 'لنتحدث عن أرضيتكم',
   'contact.fallbackDescription':
     'سواء كنتم تخططون لتجديد أو تستكشفون التشطيبات فقط، متخصصونا هنا للمساعدة. تواصلوا معنا وسنجد الخشب المناسب لمساحتكم.',
+
+  // Accessibility statement
+  'a11y.eyebrow': 'إتاحة الوصول',
+  'a11y.title': 'بيان إتاحة الوصول',
+  'a11y.intro':
+    'تحرص بركيه الأندلس على أن يتمكّن كل زائر، بمن في ذلك الأشخاص ذوو الإعاقة، من استخدام هذا الموقع بسهولة وباستقلالية.',
+  'a11y.standardTitle': 'مستوى الإتاحة',
+  'a11y.standardText':
+    'عملنا على ملاءمة هذا الموقع للمعيار الإسرائيلي 5568 المبني على إرشادات WCAG 2.0 بمستوى AA، كما تقتضي أنظمة المساواة في الحقوق للأشخاص ذوي الإعاقة (ملاءمات الإتاحة للخدمة)، 2013.',
+  'a11y.featuresTitle': 'ما قمنا به',
+  'a11y.feature1':
+    'تصفّح كامل باستخدام لوحة المفاتيح، مع إبراز واضح للعنصر المحدَّد ورابط «تخطَّ إلى المحتوى الرئيسي».',
+  'a11y.feature2': 'دعم قارئات الشاشة: بنية صفحات دلالية وعناوين ونص بديل للصور.',
+  'a11y.feature3': 'تباين كافٍ بين ألوان النص والخلفية.',
+  'a11y.feature4': 'تتوقف الحركات المتحرّكة لدى الزوّار الذين ضبطوا أجهزتهم على تقليل الحركة.',
+  'a11y.feature5':
+    'الموقع متاح بالعربية والعبرية والإنجليزية، مع دعم كامل للكتابة من اليمين إلى اليسار.',
+  'a11y.limitationsTitle': 'قيود معروفة',
+  'a11y.limitationsText':
+    'تُعرض أسماء المنتجات وأوصافها حاليًا باللغة التي أُدخلت بها. إذا وجدتم جزءًا من الموقع غير متاح، يسعدنا أن تُعلمونا.',
+  'a11y.contactTitle': 'التواصل بشأن إتاحة الوصول',
+  'a11y.contactText':
+    'إذا واجهتم مشكلة في إتاحة الوصول أو احتجتم إلى المعلومات بصيغة أخرى، تواصلوا معنا وسنبذل قصارى جهدنا للمساعدة:',
+  'a11y.phone': 'الهاتف',
+  'a11y.email': 'البريد الإلكتروني',
+  'a11y.updated': 'آخر تحديث لهذا البيان: {date}.',
 };
 
 const he: Record<TranslationKey, string> = {
@@ -221,6 +280,7 @@ const he: Record<TranslationKey, string> = {
   'nav.explore': 'גלו את הקולקציה',
   'nav.toggleMenu': 'פתיחת תפריט',
   'nav.logoAlt': 'לוגו פרקט אלנדלוס',
+  'nav.skipToContent': 'דילוג לתוכן הראשי',
 
   // Footer
   'footer.quickLinks': 'קישורים מהירים',
@@ -236,6 +296,7 @@ const he: Record<TranslationKey, string> = {
   'footer.tagline': 'עשוי באהבה לרצפות שמספרות סיפור.',
   'footer.instagram': 'אינסטגרם',
   'footer.whatsapp': 'וואטסאפ',
+  'footer.accessibility': 'הצהרת נגישות',
 
   // Home
   'home.heroImgAlt': 'ריצוף פרקט פרימיום בסלון מואר',
@@ -293,6 +354,7 @@ const he: Record<TranslationKey, string> = {
   'products.showResults': 'הצג {count} תוצאות',
   'products.perSqm': '/ מ"ר',
   'products.closeFilters': 'סגירת סינון',
+  'products.loading': 'טוען מוצרים',
 
   // Contact
   'contact.callUs': 'התקשרו אלינו',
@@ -306,6 +368,31 @@ const he: Record<TranslationKey, string> = {
   'contact.fallbackTitle': 'בואו נדבר על הרצפה שלכם',
   'contact.fallbackDescription':
     'בין אם אתם מתכננים שיפוץ או רק בודקים גימורים, המומחים שלנו כאן כדי לעזור. צרו קשר ונמצא את העץ הנכון לחלל שלכם.',
+
+  // Accessibility statement
+  'a11y.eyebrow': 'נגישות',
+  'a11y.title': 'הצהרת נגישות',
+  'a11y.intro':
+    'פרקט אלנדלוס רוצה שכל מבקר באתר, כולל אנשים עם מוגבלות, יוכל להשתמש בו בקלות ובאופן עצמאי.',
+  'a11y.standardTitle': 'רמת הנגישות',
+  'a11y.standardText':
+    'פעלנו להתאים את האתר לתקן הישראלי 5568, המבוסס על הנחיות WCAG 2.0 ברמה AA, כנדרש בתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע״ג-2013.',
+  'a11y.featuresTitle': 'מה עשינו',
+  'a11y.feature1':
+    'ניווט מלא באמצעות המקלדת, עם סימון ברור של הרכיב הממוקד וקישור "דילוג לתוכן הראשי".',
+  'a11y.feature2': 'תמיכה בקוראי מסך: מבנה עמוד סמנטי, כותרות וטקסט חלופי לתמונות.',
+  'a11y.feature3': 'ניגודיות מספקת בין צבעי הטקסט והרקע.',
+  'a11y.feature4': 'האנימציות מושבתות אצל מבקרים שהגדירו במכשיר הפחתת תנועה.',
+  'a11y.feature5': 'האתר זמין בעברית, בערבית ובאנגלית, עם תמיכה מלאה בכתיבה מימין לשמאל.',
+  'a11y.limitationsTitle': 'מגבלות ידועות',
+  'a11y.limitationsText':
+    'שמות המוצרים ותיאוריהם מוצגים כרגע בשפה שבה הוזנו. אם מצאתם חלק באתר שאינו נגיש, נשמח שתעדכנו אותנו.',
+  'a11y.contactTitle': 'פנייה בנושא נגישות',
+  'a11y.contactText':
+    'נתקלתם בבעיית נגישות או שאתם זקוקים למידע בפורמט אחר? צרו איתנו קשר ונעשה כל שביכולתנו לעזור:',
+  'a11y.phone': 'טלפון',
+  'a11y.email': 'דוא״ל',
+  'a11y.updated': 'ההצהרה עודכנה לאחרונה בתאריך {date}.',
 };
 
 export const translations: Record<Lang, Record<TranslationKey, string>> = { en, ar, he };
