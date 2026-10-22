@@ -51,7 +51,11 @@ function ProductCard({
       className={`reveal ${visible ? 'is-visible' : ''} group flex flex-col overflow-hidden rounded-2xl border border-ink-200/70 bg-white shadow-soft transition-all duration-500 hover:-translate-y-1 hover:shadow-lift`}
       style={{ transitionDelay: `${(index % 3) * 90}ms` }}
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      {/* Clicking the photo opens the product too; keyboard users have the "View details" button */}
+      <div
+        onClick={() => onViewDetails(product)}
+        className="relative aspect-[4/3] cursor-pointer overflow-hidden"
+      >
         <img
           src={product.thumbnail || product.image}
           alt={product.name}

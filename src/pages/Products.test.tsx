@@ -217,6 +217,17 @@ describe('product details and inquiry', () => {
     expect(screen.queryAllByRole('article')).toHaveLength(0);
   });
 
+  it('opens a product when its photo is clicked', async () => {
+    mockApi();
+    const { user } = renderApp('/products');
+
+    const walnut = await screen.findByRole('article', { name: 'Chevron Walnut' });
+    await user.click(within(walnut).getByRole('img', { name: 'Chevron Walnut' }));
+
+    expect(screen.getByRole('heading', { level: 2, name: 'Chevron Walnut' })).toHaveFocus();
+    expect(screen.queryAllByRole('article')).toHaveLength(0);
+  });
+
   it('returns to the full collection', async () => {
     mockApi();
     const { user } = renderApp('/products');
